@@ -59,22 +59,21 @@ CREATE TABLE shippers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   profile_id UUID NOT NULL REFERENCES profiles(id),
   
-  -- Plano
-  is_premium BOOLEAN DEFAULT false,
-  premium_since TIMESTAMP,
-  premium_expires_at TIMESTAMP,
-  
-  -- Financeiro
-  current_balance DECIMAL(10,2) DEFAULT 0.00,
-  total_spent DECIMAL(10,2) DEFAULT 0.00,
-  cashback_earned DECIMAL(10,2) DEFAULT 0.00,
+  -- Autorização de pagamento
+  boleto_authorized BOOLEAN DEFAULT false,
+  boleto_authorized_at TIMESTAMP,
+  boleto_authorized_by UUID REFERENCES profiles(id),
   
   -- Estatísticas
   quotations_count INTEGER DEFAULT 0,
   completed_quotations INTEGER DEFAULT 0,
   cancelled_quotations INTEGER DEFAULT 0,
+  pending_ratings_count INTEGER DEFAULT 0,
   average_rating DECIMAL(3,2),
   rating_count INTEGER DEFAULT 0,
+  
+  -- Financeiro
+  total_spent DECIMAL(12,2) DEFAULT 0.00,
   
   -- Auditoria
   created_at TIMESTAMP DEFAULT NOW() NOT NULL,
@@ -85,7 +84,8 @@ CREATE TABLE shippers (
 );
 
 CREATE INDEX idx_shippers_profile ON shippers(profile_id);
-CREATE INDEX idx_shippers_premium ON shippers(is_premium) WHERE deleted_at IS NULL;
+CREATE INDEX idx_shippers_boleto_auth ON shippers(boleto_authorized) WHERE deleted_at IS NULL;
+CREATE INDEX idx_shippers_pending_ratings ON shippers(pending_ratings_count) WHERE pending_ratings_count > 0;
 ```
 
 ### Carriers (Transportadoras)
@@ -98,20 +98,15 @@ CREATE TABLE carriers (
   trade_name VARCHAR(255),
   antt_rntrc VARCHAR(50), -- Registro ANTT
   
-  -- Status operacional
-  blocked_from_quotations BOOLEAN DEFAULT false,
-  block_reason TEXT,
-  blocked_at TIMESTAMP,
-  
-  -- Controle de atrasos
-  monthly_delays INTEGER DEFAULT 0,
-  yearly_delays INTEGER DEFAULT 0,
-  delay_reference_month VARCHAR(7), -- YYYY-MM
+  -- Tipo de transportadora
+  is_autonomous BOOLEAN DEFAULT false,
+  has_ciot BOOLEAN DEFAULT false, -- CIOT para autônomos
   
   -- Estatísticas
   quotations_responded INTEGER DEFAULT 0,
   quotations_won INTEGER DEFAULT 0,
   quotations_completed INTEGER DEFAULT 0,
+  pending_ratings_count INTEGER DEFAULT 0,
   average_rating DECIMAL(3,2),
   rating_count INTEGER DEFAULT 0,
   completion_rate DECIMAL(5,2), -- Percentual
@@ -129,9 +124,10 @@ CREATE TABLE carriers (
 );
 
 CREATE INDEX idx_carriers_profile ON carriers(profile_id);
-CREATE INDEX idx_carriers_blocked ON carriers(blocked_from_quotations) WHERE deleted_at IS NULL;
 CREATE INDEX idx_carriers_antt ON carriers(antt_rntrc) WHERE deleted_at IS NULL;
-CREATE INDEX idx_carriers_name_gin ON carriers USING gin(to_tsvector('portuguese', company_name));
+CREATE INDEX idx_carriers_autonomous_ciot ON carriers(is_autonomous, has_ciot);
+CREATE INDEX idx_carriers_pending_ratings ON carriers(pending_ratings_count) WHERE pending_ratings_count > 0;
+CREATE INDEX idx_carriers_name_gin ON carriers USING gin(to_tsvector('portuguese', trade_name));
 ```
 
 ### Products (Produtos)
@@ -245,6 +241,7 @@ CREATE TABLE quotations (
   pickup_address_id UUID NOT NULL REFERENCES addresses(id),
   delivery_address_id UUID NOT NULL REFERENCES addresses(id),
   selected_response_id UUID REFERENCES quotation_responses(id),
+  payment_id UUID REFERENCES payments(id),
   
   -- Dados da carga
   invoice_value DECIMAL(10,2) NOT NULL CHECK (invoice_value > 0),
@@ -256,6 +253,7 @@ CREATE TABLE quotations (
   pickup_datetime TIMESTAMP NOT NULL,
   created_at TIMESTAMP DEFAULT NOW() NOT NULL,
   expiration_datetime TIMESTAMP NOT NULL,
+  expired_at TIMESTAMP,
   acceptance_datetime TIMESTAMP,
   
   -- Configurações de cotação
@@ -272,22 +270,18 @@ CREATE TABLE quotations (
   status VARCHAR(50) NOT NULL DEFAULT 'open' CHECK (status IN (
     'open', 'in_progress', 'awaiting_payment',
     'accepted', 'awaiting_pickup', 'in_transit',
-    'awaiting_cte_approval', 'completed',
-    'cancelled', 'disputed'
+    'completed', 'cancelled', 'disputed', 'expired'
   )),
   final_value DECIMAL(10,2),
-  final_shipper_value DECIMAL(10,2),
   
-  -- Controle de entrega
-  delayed BOOLEAN DEFAULT false,
-  delay_start_date TIMESTAMP,
-  delay_reason TEXT,
+  -- CT-e (atualização automática)
+  cte_value DECIMAL(10,2),
+  value_adjusted_by_cte BOOLEAN DEFAULT false,
+  original_agreed_value DECIMAL(10,2),
   
-  -- CT-e
-  cte_negotiation_started BOOLEAN DEFAULT false,
-  cte_approved_by_shipper BOOLEAN DEFAULT false,
-  cte_rejected_by_shipper BOOLEAN DEFAULT false,
-  cte_approval_datetime TIMESTAMP,
+  -- Avaliação
+  rated_by_shipper BOOLEAN DEFAULT false,
+  rated_by_carrier BOOLEAN DEFAULT false,
   
   -- Cancelamento
   cancellation_reason TEXT,
@@ -295,6 +289,7 @@ CREATE TABLE quotations (
   
   -- Cache (desnormalizado)
   shipper_company_name VARCHAR(255),
+  carrier_company_name VARCHAR(255),
   response_count INTEGER DEFAULT 0,
   
   -- Auditoria
@@ -308,7 +303,10 @@ CREATE INDEX idx_quotations_pickup_date ON quotations(pickup_datetime)
   WHERE status IN ('open', 'in_progress') AND deleted_at IS NULL;
 CREATE INDEX idx_quotations_sequential ON quotations(sequential_number);
 CREATE INDEX idx_quotations_expiration ON quotations(expiration_datetime) 
-  WHERE status = 'open' AND deleted_at IS NULL;
+  WHERE status IN ('open', 'in_progress') AND deleted_at IS NULL;
+CREATE INDEX idx_quotations_expired ON quotations(expired_at);
+CREATE INDEX idx_quotations_pending_rating ON quotations(status) 
+  WHERE status = 'completed' AND (rated_by_shipper = false OR rated_by_carrier = false);
 ```
 
 ### Quotation Responses (Respostas de Cotação)
@@ -352,7 +350,7 @@ CREATE INDEX idx_responses_carrier_status ON quotation_responses(carrier_id, sta
 CREATE INDEX idx_responses_created ON quotation_responses(created_at DESC);
 ```
 
-### Chats (Conversas e Negociações)
+### Chats (Conversas)
 ```sql
 CREATE TABLE chats (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -360,17 +358,10 @@ CREATE TABLE chats (
   shipper_id UUID NOT NULL REFERENCES shippers(id),
   carrier_id UUID NOT NULL REFERENCES carriers(id),
   
-  type VARCHAR(50) NOT NULL CHECK (type IN ('general', 'cte_negotiation')),
+  type VARCHAR(50) NOT NULL DEFAULT 'general',
   status VARCHAR(50) NOT NULL DEFAULT 'active' CHECK (status IN (
-    'active', 'awaiting_shipper', 'awaiting_carrier',
-    'approved', 'rejected_final', 'closed'
+    'active', 'closed'
   )),
-  
-  -- Negociação CT-e
-  negotiation_attempts INTEGER DEFAULT 0 CHECK (negotiation_attempts <= 2),
-  original_quotation_value DECIMAL(10,2),
-  current_proposal_value DECIMAL(10,2),
-  last_rejection_reason TEXT,
   
   -- Mensagens (JSONB para flexibilidade)
   messages JSONB DEFAULT '[]',
@@ -378,11 +369,7 @@ CREATE TABLE chats (
   -- Controle de leitura
   read_by_shipper BOOLEAN DEFAULT true,
   read_by_carrier BOOLEAN DEFAULT true,
-  
-  -- Datas
-  start_datetime TIMESTAMP DEFAULT NOW() NOT NULL,
-  expiration_datetime TIMESTAMP,
-  approved_at TIMESTAMP,
+  last_message_at TIMESTAMP,
   
   created_at TIMESTAMP DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMP DEFAULT NOW() NOT NULL
@@ -391,7 +378,8 @@ CREATE TABLE chats (
 CREATE INDEX idx_chats_quotation ON chats(quotation_id);
 CREATE INDEX idx_chats_shipper ON chats(shipper_id);
 CREATE INDEX idx_chats_carrier ON chats(carrier_id);
-CREATE INDEX idx_chats_type_status ON chats(type, status);
+CREATE INDEX idx_chats_status ON chats(status);
+CREATE INDEX idx_chats_last_message ON chats(last_message_at DESC);
 CREATE INDEX idx_chats_messages_gin ON chats USING gin(messages);
 ```
 
@@ -407,19 +395,23 @@ CREATE TABLE payments (
   gross_amount DECIMAL(10,2) NOT NULL,
   platform_fee DECIMAL(10,2) NOT NULL,
   carrier_net_amount DECIMAL(10,2) NOT NULL,
-  cashback_amount DECIMAL(10,2) DEFAULT 0,
   
   -- Pagamento
   payment_method VARCHAR(50) CHECK (payment_method IN (
-    'credit_card', 'debit_card', 'pix', 'boleto', 'balance'
+    'infinitepay', 'credit_card', 'debit_card', 'pix', 'boleto'
   )),
   status VARCHAR(50) NOT NULL DEFAULT 'pending' CHECK (status IN (
-    'pending', 'processing', 'completed', 'failed', 'refunded'
+    'pending', 'processing', 'completed', 'failed', 'refunded', 'overdue'
   )),
   
-  -- Dados externos (gateway)
+  -- Boleto (para CNPJ autorizado)
+  due_date DATE, -- Último dia do mês para boleto
+  boleto_url TEXT,
+  boleto_barcode VARCHAR(255),
+  
+  -- Dados externos (gateway InfinitePay)
   external_payment_id VARCHAR(255),
-  gateway VARCHAR(50),
+  gateway VARCHAR(50) DEFAULT 'infinitepay',
   
   -- Datas
   paid_at TIMESTAMP,
@@ -433,6 +425,7 @@ CREATE INDEX idx_payments_quotation ON payments(quotation_id);
 CREATE INDEX idx_payments_shipper ON payments(shipper_id);
 CREATE INDEX idx_payments_carrier ON payments(carrier_id);
 CREATE INDEX idx_payments_status ON payments(status);
+CREATE INDEX idx_payments_due_date ON payments(due_date) WHERE status = 'pending';
 CREATE INDEX idx_payments_external ON payments(external_payment_id);
 ```
 
@@ -503,34 +496,18 @@ CREATE TABLE quotation_status_history (
 
 CREATE INDEX idx_status_history_quotation ON quotation_status_history(quotation_id, created_at DESC);
 
--- Histórico de atrasos
-CREATE TABLE delay_history (
+-- Histórico de ajustes de valor por CT-e
+CREATE TABLE quotation_value_adjustments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   quotation_id UUID NOT NULL REFERENCES quotations(id),
-  carrier_id UUID NOT NULL REFERENCES carriers(id),
-  shipper_id UUID NOT NULL REFERENCES shippers(id),
-  delay_date TIMESTAMP NOT NULL,
-  reason TEXT,
-  month_reference VARCHAR(7),
+  original_value DECIMAL(10,2) NOT NULL,
+  new_value DECIMAL(10,2) NOT NULL,
+  adjustment_reason VARCHAR(100) NOT NULL,
+  adjusted_at TIMESTAMP NOT NULL,
   created_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
 
-CREATE INDEX idx_delay_history_carrier ON delay_history(carrier_id, month_reference);
-
--- Histórico de bloqueios
-CREATE TABLE carrier_block_history (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  carrier_id UUID NOT NULL REFERENCES carriers(id),
-  reason VARCHAR(100) NOT NULL,
-  month_reference VARCHAR(7),
-  delays_count INTEGER,
-  blocked_at TIMESTAMP,
-  unblocked_at TIMESTAMP,
-  unblocked_by UUID,
-  unblock_reason TEXT
-);
-
-CREATE INDEX idx_block_history_carrier ON carrier_block_history(carrier_id, blocked_at DESC);
+CREATE INDEX idx_value_adjustments_quotation ON quotation_value_adjustments(quotation_id, adjusted_at DESC);
 ```
 
 ## Triggers

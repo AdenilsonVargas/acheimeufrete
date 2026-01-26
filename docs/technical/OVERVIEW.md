@@ -57,31 +57,46 @@ sequenceDiagram
     API->>Transportadora: Notificação (proposta aceita)
 ```
 
-### 2. Fluxo de Negociação CT-e
+### 2. Fluxo de Atualização Automática por CT-e
 
 ```
-1. Transportadora inicia CT-e com valor diferente
-2. Embarcador recebe notificação
-3. Embarcador pode:
-   - Aceitar (finaliza negociação)
-   - Rejeitar com contraproposta (tentativa 1)
-   - Rejeitar sem contraproposta (tentativa 1)
-4. Se rejeitado, transportadora pode fazer nova proposta
-5. Após 2 tentativas rejeitadas → cotação cancelada automaticamente
+1. Transportadora emite CT-e com valor X
+2. Sistema compara valor do CT-e com valor acordado
+3. Se valores forem diferentes:
+   - Sistema atualiza automaticamente o valor da cotação
+   - Recalcula taxa da plataforma (5%)
+   - Atualiza valor líquido da transportadora
+   - Notifica embarcador sobre o ajuste
+4. Nenhuma negociação é permitida - ajuste é automático
 ```
 
-### 3. Sistema de Bloqueio por Atrasos
+### 3. Sistema de Expiração Automática
 
 ```
-Atraso registrado → Incrementa contador mensal
-                 ↓
-        contador >= 3 no mês?
-                 ↓
-              Sim → Bloquear transportadora
-                 ↓
-         Notificar e registrar no histórico
-                 ↓
-      Impedido de receber novas cotações
+Cron job (a cada minuto)
+    ↓
+Busca cotações com expiration_datetime <= NOW()
+    ↓
+Atualiza status → 'expired'
+    ↓
+Cotação desaparece de TODAS as telas de transportadoras
+    ↓
+Notifica embarcador
+```
+
+### 4. Fluxo de Avaliações Obrigatórias
+
+```
+Cotação completa
+    ↓
+Sistema marca avaliação como pendente
+    ↓
+Usuário tenta criar/aceitar nova cotação
+    ↓
+Sistema verifica avaliações pendentes
+    ↓
+Se pendente → Bloqueia ação + exibe avaliações pendentes
+Se ok → Permite continuar
 ```
 
 ## Stack Tecnológica Recomendada
@@ -89,47 +104,159 @@ Atraso registrado → Incrementa contador mensal
 ### Backend
 ```javascript
 {
-  "runtime": "Node.js 18+",
-  "framework": "Express ou Fastify",
-  "language": "TypeScript",
-  "orm": "Prisma ou Knex.js",
-  "validation": "Zod",
-  "authentication": "jsonwebtoken + bcrypt",
-  "testing": "Jest + Supertest",
-  "logging": "Winston ou Pino",
-  "monitoring": "PM2 + Prometheus"
+  "runtime": "Node.js 20 LTS ou Bun 1.0+",
+  "framework": "Fastify 4+ (high performance) ou NestJS (enterprise)",
+  "language": "TypeScript 5+",
+  "orm": "Prisma 5+ (type-safe) ou Drizzle ORM",
+  "validation": "Zod (runtime type-safe)",
+  "authentication": "jose (JWT) + argon2 (password hashing)",
+  "api_documentation": "Scalar ou Swagger (OpenAPI 3.1)",
+  "testing": {
+    "unit": "Vitest (faster than Jest)",
+    "integration": "Supertest",
+    "e2e": "Playwright"
+  },
+  "logging": "Pino (high performance JSON logging)",
+  "monitoring": "OpenTelemetry + Grafana + Loki",
+  "queue": "BullMQ (Redis-based) para jobs assíncronos",
+  "websockets": "Socket.io ou WS para notificações real-time",
+  "cron": "node-cron ou BullMQ scheduler"
 }
 ```
 
 ### Frontend
 ```javascript
 {
-  "framework": "Next.js 14+",
-  "language": "TypeScript",
-  "styling": "Tailwind CSS",
-  "state": "Zustand ou Redux Toolkit",
-  "http": "Axios",
-  "forms": "React Hook Form + Zod",
-  "testing": "Jest + React Testing Library"
+  "framework": "Next.js 15+ (App Router) com React 19",
+  "language": "TypeScript 5+",
+  "styling": {
+    "primary": "Tailwind CSS 4+",
+    "components": "shadcn/ui (headless, customizable)",
+    "icons": "Lucide React"
+  },
+  "state": {
+    "client": "Zustand (lightweight) ou Jotai",
+    "server": "TanStack Query v5 (React Query)",
+    "forms": "React Hook Form + Zod"
+  },
+  "http": "Native Fetch API + TanStack Query",
+  "realtime": "Socket.io client para notificações",
+  "charts": "Recharts ou Chart.js",
+  "maps": "Mapbox GL JS ou Leaflet",
+  "testing": {
+    "unit": "Vitest + React Testing Library",
+    "e2e": "Playwright",
+    "visual": "Chromatic ou Percy"
+  },
+  "performance": {
+    "images": "Next.js Image Optimization",
+    "fonts": "next/font (automatic optimization)",
+    "analytics": "Vercel Analytics ou Plausible"
+  }
+}
+```
+
+### Mobile (Opcional)
+```javascript
+{
+  "framework": "React Native com Expo SDK 50+",
+  "language": "TypeScript 5+",
+  "navigation": "Expo Router (file-based)",
+  "state": "Zustand + TanStack Query",
+  "ui": "NativeWind (Tailwind for React Native)",
+  "notifications": "Expo Notifications + Push",
+  "maps": "react-native-maps"
 }
 ```
 
 ### Infraestrutura
 ```yaml
 database:
-  primary: PostgreSQL 15+
-  cache: Redis 7+
+  primary: PostgreSQL 16+ (com pgvector para ML futuro)
+  cache: Redis 7+ (Valkey como alternativa)
+  search: Meilisearch ou Typesense (full-text search)
+  
+payments:
+  gateway: InfinitePay API
+  boleto: InfinitePay ou Asaas
+  
+storage:
+  files: AWS S3 ou Cloudflare R2
+  cdn: Cloudflare CDN
   
 deployment:
-  containerization: Docker
-  orchestration: Docker Compose (dev) / Kubernetes (prod)
+  containerization: Docker + Docker Compose
+  orchestration: Kubernetes (produção) ou Railway/Render (staging)
   ci_cd: GitHub Actions
-  hosting: AWS/GCP/Azure
+  hosting: 
+    backend: Railway, Render, ou AWS ECS
+    frontend: Vercel (Next.js) ou Cloudflare Pages
+    database: Supabase, Neon, ou AWS RDS
   
 monitoring:
-  apm: New Relic ou Datadog
-  logs: ELK Stack ou CloudWatch
+  apm: Better Stack (moderno) ou Sentry
+  logs: Better Stack ou Grafana Loki
+  metrics: Prometheus + Grafana
+  uptime: Better Uptime ou UptimeRobot
   errors: Sentry
+  
+security:
+  waf: Cloudflare WAF
+  ddos: Cloudflare DDoS Protection
+  ssl: Let's Encrypt (Cloudflare managed)
+  secrets: Doppler ou Infisical
+```
+
+### DevOps & Tools
+```yaml
+version_control:
+  git: GitHub
+  workflow: Trunk-based development
+  
+code_quality:
+  linter: ESLint 9+ (flat config)
+  formatter: Prettier 3+
+  type_check: TypeScript strict mode
+  pre_commit: Husky + lint-staged
+  
+ci_cd:
+  platform: GitHub Actions
+  preview: Vercel Preview Deployments
+  staging: Automatic deploy on main
+  production: Manual approval + blue-green deployment
+  
+documentation:
+  api: Scalar (modern OpenAPI UI)
+  code: TSDoc comments
+  architecture: Mermaid diagrams
+  wiki: GitHub Wiki ou Notion
+```
+
+### Pagamentos & Integrações
+```yaml
+infinitepay:
+  api_version: v2
+  features:
+    - Pagamentos via Pix
+    - Cartão de crédito/débito
+    - Link de pagamento
+    - Boleto (CNPJ autorizado)
+    - Split de pagamento (5% plataforma)
+  
+sefaz:
+  cte: API de consulta CT-e
+  nfe: Validação de notas fiscais
+  
+notifications:
+  email: Resend (moderno) ou SendGrid
+  sms: Twilio
+  whatsapp: Twilio WhatsApp Business API
+  push: Expo Push Notifications (mobile)
+  
+maps:
+  geocoding: Google Maps API ou Mapbox
+  routing: Google Maps Directions API
+  tracking: Socket.io para rastreamento real-time
 ```
 
 ## Segurança
