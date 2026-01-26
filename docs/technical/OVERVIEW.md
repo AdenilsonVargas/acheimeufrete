@@ -11,12 +11,12 @@ Este documento fornece uma visão geral da arquitetura técnica, decisões de de
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                    FRONTEND (Client)                     │
-│  React/Next.js + Tailwind CSS + State Management        │
+│  Next.js 15 + React 19 + Tailwind CSS + State Mgmt     │
 └─────────────────────────────────────────────────────────┘
                            ↕ HTTPS/REST
 ┌─────────────────────────────────────────────────────────┐
 │                   BACKEND (API Server)                   │
-│  Node.js/Express + JWT Auth + Business Logic            │
+│  Fastify/NestJS + JWT Auth + Business Logic             │
 └─────────────────────────────────────────────────────────┘
                            ↕
 ┌──────────────────────┐          ┌────────────────────────┐
@@ -118,7 +118,7 @@ Se ok → Permite continuar
   },
   "logging": "Pino (high performance JSON logging)",
   "monitoring": "OpenTelemetry + Grafana + Loki",
-  "queue": "BullMQ (Redis-based) para jobs assíncronos",
+  "queue": "BullMQ (Redis-based) for async jobs",
   "websockets": "Socket.io ou WS para notificações real-time",
   "cron": "node-cron ou BullMQ scheduler"
 }
@@ -172,7 +172,7 @@ Se ok → Permite continuar
 ### Infraestrutura
 ```yaml
 database:
-  primary: PostgreSQL 16+ (com pgvector para ML futuro)
+  primary: PostgreSQL 16+ (with pgvector for future ML)
   cache: Redis 7+ (Valkey como alternativa)
   search: Meilisearch ou Typesense (full-text search)
   

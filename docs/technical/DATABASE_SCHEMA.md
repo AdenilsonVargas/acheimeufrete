@@ -241,7 +241,7 @@ CREATE TABLE quotations (
   pickup_address_id UUID NOT NULL REFERENCES addresses(id),
   delivery_address_id UUID NOT NULL REFERENCES addresses(id),
   selected_response_id UUID REFERENCES quotation_responses(id),
-  payment_id UUID REFERENCES payments(id),
+  payment_id UUID REFERENCES payments(id) ON DELETE SET NULL,
   
   -- Dados da carga
   invoice_value DECIMAL(10,2) NOT NULL CHECK (invoice_value > 0),

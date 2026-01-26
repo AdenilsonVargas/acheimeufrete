@@ -256,7 +256,7 @@ function getLastDayOfCurrentMonth() {
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth();
-  // Próximo mês, dia 0 = último dia do mês anterior
+  // Next month day 0 = last day of current month
   return new Date(year, month + 1, 0);
 }
 
@@ -344,6 +344,9 @@ async function processQuotationPayment(quotationId, paymentData) {
 **IMPORTANTE**: Não existe mais negociação de CT-e. Se o valor do CT-e for diferente do valor acordado, a plataforma atualiza automaticamente.
 
 ```javascript
+// Tolerance for value comparison (1 cent)
+const VALUE_COMPARISON_TOLERANCE = 0.01;
+
 /**
  * Atualiza valor da cotação baseado no CT-e
  * Se o valor for diferente, atualiza automaticamente
@@ -366,7 +369,7 @@ async function updateQuotationValueFromCTe(quotationId, cteValue) {
     const newValue = cteValue;
     
     // Se valores são diferentes, atualizar automaticamente
-    if (Math.abs(originalValue - newValue) > 0.01) { // tolerância de 1 centavo
+    if (Math.abs(originalValue - newValue) > VALUE_COMPARISON_TOLERANCE) {
       const platformFee = calculatePlatformFee(newValue);
       const carrierNetValue = calculateCarrierNetValue(newValue);
       
