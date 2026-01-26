@@ -8,6 +8,11 @@ Este documento descreve a estrutura recomendada para o projeto Achei Meu Frete.
 acheimeufrete/
 │
 ├── docs/                           # Documentação do projeto
+│   ├── technical/                  # Documentação técnica detalhada
+│   │   ├── API_DESIGN.md          # Design de API RESTful e segurança
+│   │   ├── DATABASE.md            # Otimização e boas práticas de BD
+│   │   ├── DATABASE_SCHEMA.md     # Schema completo do banco
+│   │   └── BUSINESS_RULES.md      # Regras de negócio críticas
 │   ├── api/                        # Documentação da API
 │   ├── architecture/               # Diagramas e documentação de arquitetura
 │   └── user-guide/                 # Guia do usuário
@@ -132,13 +137,24 @@ acheimeufrete/
 
 ## Próximos Passos
 
-1. Definir a stack tecnológica
-2. Criar a estrutura de pastas
-3. Configurar ambiente de desenvolvimento
-4. Implementar funcionalidades básicas
-5. Adicionar testes
-6. Configurar CI/CD
-7. Deploy em ambiente de staging
+1. ✅ Definir a stack tecnológica
+2. ✅ Documentar regras de negócio e padrões de API
+3. ✅ Criar schema do banco de dados
+4. Criar a estrutura de pastas do projeto
+5. Configurar ambiente de desenvolvimento
+6. Implementar funcionalidades básicas
+7. Adicionar testes
+8. Configurar CI/CD
+9. Deploy em ambiente de staging
+
+## 📚 Documentação Técnica Disponível
+
+O projeto conta com documentação técnica abrangente:
+
+- **[API Design](technical/API_DESIGN.md)** - Padrões RESTful, autenticação JWT, rate limiting, validação de dados, auditoria e tratamento de erros
+- **[Database Best Practices](technical/DATABASE.md)** - Escolha de bancos (PostgreSQL + Redis), design de schema, índices críticos, transações, otimização de queries e estratégias de backup
+- **[Database Schema](technical/DATABASE_SCHEMA.md)** - Schema completo com todas as tabelas, relacionamentos, constraints, índices, triggers e views
+- **[Business Rules](technical/BUSINESS_RULES.md)** - State machine de cotações, cálculos financeiros precisos, sistema de bloqueio por atrasos, negociação de CT-e e avaliações
 
 ---
 
