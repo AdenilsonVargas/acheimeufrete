@@ -49,13 +49,41 @@ acheimeufrete/
 └── README.md                # Este arquivo
 ```
 
-## 📚 Documentação Técnica
+## 📚 Documentação Técnica Completa
 
-- **[API Design](docs/technical/API_DESIGN.md)** - Padrões RESTful, segurança, validação e estrutura de endpoints
-- **[Database Best Practices](docs/technical/DATABASE.md)** - Otimização, índices, transações e backup
-- **[Database Schema](docs/technical/DATABASE_SCHEMA.md)** - Schema completo com todas as tabelas e relacionamentos
-- **[Business Rules](docs/technical/BUSINESS_RULES.md)** - Regras críticas: estado de cotações, cálculos financeiros, bloqueios e negociações
+### 📖 Documentos Essenciais (Leia ANTES de Desenvolver)
+
+- **[Fluxos Completos de Negócio](docs/technical/COMPLETE_BUSINESS_FLOWS.md)** ⭐ **ESSENCIAL** - Processos end-to-end detalhados:
+  - Fluxo completo de cotação (criação → pagamento → entrega → avaliação)
+  - Emissão de CIOT para transportadores autônomos
+  - Emissão de CT-e com certificado digital e ajuste automático de valor
+  - Emissão de NF-e de serviço
+  - Processamento de pagamentos (InfinitePay, boleto)
+  - Sistema de avaliações obrigatórias
+  - Jobs automatizados (cron)
+
+- **[Guia de Integrações](docs/technical/INTEGRATIONS.md)** ⭐ **ESSENCIAL** - Integrações com sistemas externos:
+  - InfinitePay (pagamentos PIX, cartão, boleto)
+  - SEFAZ (CT-e e NF-e)
+  - ANTT (CIOT)
+  - Google Maps / Mapbox (geolocalização)
+  - Resend / Twilio (notificações)
+  - AWS S3 / Cloudflare R2 (arquivos)
+  - Better Stack / Sentry (monitoramento)
+
+### 🏗️ Documentação de Arquitetura e Implementação
+
+- **[Visão Geral da Arquitetura](docs/technical/OVERVIEW.md)** - Stack tecnológica moderna 2026, arquitetura 3 camadas, fluxos principais
+- **[API Design](docs/technical/API_DESIGN.md)** - Padrões RESTful, JWT, rate limiting, validação com Zod, endpoints documentados
+- **[Database Best Practices](docs/technical/DATABASE.md)** - PostgreSQL + Redis, índices críticos, transações, otimização de queries
+- **[Database Schema](docs/technical/DATABASE_SCHEMA.md)** - Schema completo: tabelas, relacionamentos, constraints, indexes, triggers
+- **[Business Rules](docs/technical/BUSINESS_RULES.md)** - State machine, cálculos financeiros (5% taxa), pagamentos, avaliações obrigatórias
 - **[Project Structure](docs/PROJECT_STRUCTURE.md)** - Arquitetura geral e organização do código
+
+> 💡 **Para Desenvolvedores:** 
+> 1. **SEMPRE** leia os documentos de **Fluxos Completos** e **Integrações** ANTES de implementar
+> 2. Estes documentos garantem compreensão total do negócio e evitam retrabalho
+> 3. Todos os fluxos incluem código de exemplo pronto para uso
 
 ## 🤝 Como Contribuir
 

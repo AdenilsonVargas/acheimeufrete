@@ -9,6 +9,9 @@ acheimeufrete/
 │
 ├── docs/                           # Documentação do projeto
 │   ├── technical/                  # Documentação técnica detalhada
+│   │   ├── COMPLETE_BUSINESS_FLOWS.md  ⭐ Processos completos end-to-end
+│   │   ├── INTEGRATIONS.md        ⭐ Guia de integrações externas
+│   │   ├── OVERVIEW.md            # Arquitetura e stack tecnológica
 │   │   ├── API_DESIGN.md          # Design de API RESTful e segurança
 │   │   ├── DATABASE.md            # Otimização e boas práticas de BD
 │   │   ├── DATABASE_SCHEMA.md     # Schema completo do banco
