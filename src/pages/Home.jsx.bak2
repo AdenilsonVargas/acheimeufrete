@@ -1,0 +1,425 @@
+import { Truck, Package, MapPin, TrendingUp, Shield, Zap, ChevronRight, DollarSign, Users, Gauge, Award, Briefcase, FileText } from 'lucide-react';
+import { Link } from 'react-router-dom';
+// Header é globalizado em App.jsx
+import Footer from '@/components/Footer';
+import AnimatedCard from '@/components/AnimatedCard';
+import AnimatedText from '@/components/AnimatedText';
+import AnimatedSection from '@/components/AnimatedSection';
+import { useScrollRevealBatch } from '@/hooks/useScrollReveal';
+import ImageCarousel from '@/components/ImageCarousel';
+import AnimatedFeatureCard from '@/components/AnimatedFeatureCard';
+import DynamicContentCarousel from '@/components/DynamicContentCarousel';
+import AnimatedIcon from '@/components/AnimatedIcon';
+import { ConnectedGlobeBackground } from '@/components/ConnectedGlobeBackground';
+
+export default function Home() {
+  useScrollRevealBatch();
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-transparent text-slate-900 dark:text-white relative z-10">
+      {/* Header globalizado em App.jsx */}
+
+      {/* Hero Section */}
+      <section className="container-responsive py-responsive">
+        <div className="text-center mb-8 sm:mb-12 md:mb-16">
+          <AnimatedText type="normal" delay={0.1}>
+            <div className="inline-block bg-orange-600/20 border border-orange-600/40 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 mb-4 sm:mb-6">
+              <p className="text-orange-400 text-xs sm:text-sm font-semibold">🚀 A Plataforma #1 em Logística Colaborativa</p>
+            </div>
+          </AnimatedText>
+          
+          <AnimatedText type="title" delay={0.2} className="mb-4 sm:mb-6 px-2 sm:px-0">
+            <h1 className="text-responsive-2xl font-bold text-slate-900 dark:text-white leading-tight" style={{ fontFamily: '"Sora", system-ui, sans-serif' }}>
+              Revolucione sua Logística
+              <span className="gradient-text block text-orange-500 mt-2">com Inteligência e Economia</span>
+            </h1>
+          </AnimatedText>
+          
+          <AnimatedText type="subtitle" delay={0.3} className="mb-6 sm:mb-8 max-w-3xl mx-auto px-4 sm:px-0">
+            <p className="text-responsive-base text-slate-700 dark:text-slate-300 leading-relaxed" style={{ fontFamily: '"Sora", system-ui, sans-serif' }}>
+              A plataforma que conecta embarcadores e transportadores de forma inteligente, oferecendo economias de até <span className="text-orange-400 font-semibold">43%</span> em cotações, crescimento acelerado para pequenas transportadoras e preços acessíveis para quem está começando. Cotações em tempo real, pagamento seguro e rastreamento completo em um único lugar.
+            </p>
+          </AnimatedText>
+          
+          <AnimatedSection delay={0.4} className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4 sm:px-0">
+            <Link
+              to="/cadastro"
+              className="btn-primary inline-block text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 font-semibold hover:scale-105 transition-transform animate-pulse-glow"
+            >
+              Comece Grátis Agora
+            </Link>
+            <Link
+              to="/sobre"
+              className="btn-secondary inline-block text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 font-semibold hover:scale-105 transition-transform"
+            >
+              Conheça Nossa Solução
+            </Link>
+          </AnimatedSection>
+        </div>
+
+        {/* Carrossel de Benefícios */}
+        <AnimatedSection delay={0.5} className="mb-12 sm:mb-16 md:mb-20">
+          <ImageCarousel />
+        </AnimatedSection>
+      </section>
+
+      {/* Features Section */}
+      <section className="bg-slate-100 dark:bg-slate-900 py-responsive reveal">
+        <div className="container-responsive">
+          <AnimatedText type="title" delay={0.1} className="text-responsive-xl font-bold text-slate-900 dark:text-white text-center mb-4 sm:mb-6">
+            Por que Escolher Achei Meu Frete?
+          </AnimatedText>
+          <AnimatedText type="subtitle" delay={0.2} className="text-center text-responsive-base text-slate-700 dark:text-slate-300 mb-8 sm:mb-12 md:mb-16 max-w-2xl mx-auto px-4 sm:px-0">
+            A solução completa para conectar sua empresa com os melhores transportadores do mercado
+          </AnimatedText>
+
+          <div className="grid-responsive-cards">
+            {/* Feature 1 */}
+            <AnimatedCard delay={0.3} className="card hover:border-orange-600 transition hover:shadow-xl hover:-translate-y-1 reveal">
+              <Zap className="w-10 h-10 sm:w-12 sm:h-12 text-orange-600 mb-3 sm:mb-4" />
+              <h3 className="text-responsive-lg font-bold text-slate-900 dark:text-white mb-2">Cotações em Tempo Real</h3>
+              <p className="text-responsive-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                Receba propostas de múltiplos transportadores simultâneamente. Compare preços, prazos e condições em um único lugar.
+              </p>
+            </AnimatedCard>
+
+            {/* Feature 2 */}
+            <AnimatedCard delay={0.4} className="card hover:border-cyan-400 transition hover:shadow-xl hover:-translate-y-1 reveal">
+              <DollarSign className="w-10 h-10 sm:w-12 sm:h-12 text-cyan-400 mb-3 sm:mb-4" />
+              <h3 className="text-responsive-lg font-bold text-slate-900 dark:text-white mb-2">Economia Garantida</h3>
+              <p className="text-responsive-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                Economize até 43% em suas cotações através da concorrência saudável entre transportadores qualificados.
+              </p>
+            </AnimatedCard>
+
+            {/* Feature 3 */}
+            <AnimatedCard delay={0.5} className="card hover:border-teal-400 transition hover:shadow-xl hover:-translate-y-1 reveal">
+              <Shield className="w-10 h-10 sm:w-12 sm:h-12 text-teal-400 mb-3 sm:mb-4" />
+              <h3 className="text-responsive-lg font-bold text-slate-900 dark:text-white mb-2">Seguro e Confiável</h3>
+              <p className="text-responsive-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                Transportadores verificados, pagamento seguro, rastreamento completo e suporte 24/7 para sua tranquilidade.
+              </p>
+            </AnimatedCard>
+
+            {/* Feature 4 */}
+            <AnimatedCard delay={0.6} className="card hover:border-green-400 transition hover:shadow-xl hover:-translate-y-1 reveal">
+              <FileText className="w-10 h-10 sm:w-12 sm:h-12 text-green-400 mb-3 sm:mb-4" />
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Documentação Completa</h3>
+              <p className="text-slate-700 dark:text-slate-700 dark:text-slate-300">
+                Emissão automática de Nota Fiscal, CT-e e CIOT. Tudo integrado e regularizado conforme legislação.
+              </p>
+            </AnimatedCard>
+
+            {/* Feature 5 */}
+            <AnimatedCard delay={0.7} className="card hover:border-pink-400 transition hover:shadow-xl hover:-translate-y-1 reveal">
+              <TrendingUp className="w-10 h-10 sm:w-12 sm:h-12 text-pink-400 mb-3 sm:mb-4" />
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Crescimento para Transportadores</h3>
+              <p className="text-slate-700 dark:text-slate-700 dark:text-slate-300">
+                Pequenas e médias transportadoras crescem exponencialmente com acesso a oportunidades diárias de frete.
+              </p>
+            </AnimatedCard>
+
+            {/* Feature 6 */}
+            <AnimatedCard delay={0.8} className="card hover:border-purple-400 transition hover:shadow-xl hover:-translate-y-1 reveal">
+              <Users className="w-10 h-10 sm:w-12 sm:h-12 text-purple-400 mb-3 sm:mb-4" />
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Rede Colaborativa</h3>
+              <p className="text-slate-700 dark:text-slate-700 dark:text-slate-300">
+                Conecte-se com embarcadores qualificados, aumente seu faturamento e escale seu negócio de forma sustentável.
+              </p>
+            </AnimatedCard>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section - Para Embarcadores e Transportadores */}
+      <section className="container-responsive py-responsive">
+        <div className="mb-8 sm:mb-12 md:mb-16 text-center">
+          <AnimatedText type="title" delay={0.1} className="text-responsive-xl font-bold text-slate-900 dark:text-white mb-4">
+            Soluções Personalizadas para Seu Negócio
+          </AnimatedText>
+          <AnimatedText type="subtitle" delay={0.2} className="text-slate-700 dark:text-slate-700 dark:text-slate-300 max-w-2xl mx-auto">
+            Seja você um embarcador buscando as melhores cotações ou uma transportadora querendo crescer, temos a solução certa para você
+          </AnimatedText>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12">
+          {/* Para Embarcadores */}
+          <AnimatedCard delay={0.3} className="card border-l-4 border-orange-600 reveal">
+            <Package className="w-12 h-12 sm:w-16 sm:h-16 text-orange-600 mb-6" />
+            <h3 className="text-responsive-lg font-bold text-slate-900 dark:text-white mb-4">Para Embarcadores</h3>
+            <p className="text-slate-700 dark:text-slate-700 dark:text-slate-300 mb-6 sm:mb-8 text-responsive-base">
+              Encontre os melhores transportadores para suas cargas com segurança, rapidez e economia garantida. Controle total sobre suas logísticas com tecnologia de ponta.
+            </p>
+            <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
+              <div>
+                <h4 className="text-orange-400 font-semibold mb-1 sm:mb-2 text-sm sm:text-base">✓ Economia de Até 43%</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm">Concorrência saudável entre transportadores gera economias expressivas nas suas cotações</p>
+              </div>
+              <div>
+                <h4 className="text-orange-400 font-semibold mb-1 sm:mb-2 text-sm sm:text-base">✓ Sistema Inteligente de Filtragem por NCM</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm">Suas cotações chegam apenas aos transportadores especializados no seu produto</p>
+              </div>
+              <div>
+                <h4 className="text-orange-400 font-semibold mb-1 sm:mb-2 text-sm sm:text-base">✓ Informações Completas e Seguras</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm">Inclua produtos, NF, opções de carga, envio, dados de remetente e destinatário com facilidade</p>
+              </div>
+              <div>
+                <h4 className="text-orange-400 font-semibold mb-1 sm:mb-2 text-sm sm:text-base">✓ Pagamento Flexível</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm">Cartão de crédito, boleto ou CNPJ com liberação de boleto para pagamento no mês seguinte</p>
+              </div>
+              <div>
+                <h4 className="text-orange-400 font-semibold mb-1 sm:mb-2 text-sm sm:text-base">✓ Chat Direto com Transportadores</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm">Acerte detalhes sobre coleta, horários e especificidades através do chat integrado</p>
+              </div>
+              <div>
+                <h4 className="text-orange-400 font-semibold mb-1 sm:mb-2 text-sm sm:text-base">✓ Rastreamento e Controle Total</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm">Monitore suas entregas em tempo real com confirmação de coleta e entrega automáticas</p>
+              </div>
+            </div>
+            <Link to="/cadastro" className="btn-primary inline-block w-full text-center py-3 sm:py-4 font-semibold text-sm sm:text-base hover:scale-105 transition-transform">
+              Cadastrar Como Embarcador
+            </Link>
+          </AnimatedCard>
+
+          {/* Para Transportadores */}
+          <AnimatedCard delay={0.4} className="card border-l-4 border-cyan-400 reveal">
+            <Truck className="w-12 h-12 sm:w-16 sm:h-16 text-cyan-400 mb-6" />
+            <h3 className="text-responsive-lg font-bold text-slate-900 dark:text-white mb-4">Para Transportadores</h3>
+            <p className="text-slate-700 dark:text-slate-300 mb-6 sm:mb-8 text-responsive-base">
+              Aumente seu faturamento exponencialmente com acesso diário a oportunidades de frete qualificadas. Crescimento escalável para seu negócio.
+            </p>
+            <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
+              <div>
+                <h4 className="text-cyan-400 font-semibold mb-1 sm:mb-2 text-sm sm:text-base">✓ Oportunidades Diárias Qualificadas</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm">Receba cotações filtradas por NCM que sua empresa realmente transporta</p>
+              </div>
+              <div>
+                <h4 className="text-cyan-400 font-semibold mb-1 sm:mb-2 text-sm sm:text-base">✓ Crescimento para Pequenas Transportadoras</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm">Acesse o mesmo volume de oportunidades que as grandes empresas. Escale sem investimento pesado</p>
+              </div>
+              <div>
+                <h4 className="text-cyan-400 font-semibold mb-1 sm:mb-2 text-sm sm:text-base">✓ Clientes Verificados e Confiáveis</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm">Todos os embarcadores são validados. Segurança e confiabilidade em cada frete</p>
+              </div>
+              <div>
+                <h4 className="text-cyan-400 font-semibold mb-1 sm:mb-2 text-sm sm:text-base">✓ Pagamento Garantido</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm">Para autônomos: pagamento imediato ao confirmar coleta. Para empresas: liquidação em até 30 dias</p>
+              </div>
+              <div>
+                <h4 className="text-cyan-400 font-semibold mb-1 sm:mb-2 text-sm sm:text-base">✓ Dashboard Intuitivo e Relatórios</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm">Acompanhe seus ganhos, desempenho e histórico de fretes em tempo real</p>
+              </div>
+              <div>
+                <h4 className="text-cyan-400 font-semibold mb-1 sm:mb-2 text-sm sm:text-base">✓ Geração Automática de Documentos</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm">CT-e e CIOT gerados automaticamente. Foco no frete, não na burocracia</p>
+              </div>
+            </div>
+            <Link to="/cadastro" className="btn-secondary inline-block w-full text-center py-3 sm:py-4 font-semibold text-sm sm:text-base hover:scale-105 transition-transform">
+              Cadastrar Como Transportador
+            </Link>
+          </AnimatedCard>
+        </div>
+      </section>
+
+      {/* Value Proposition Section */}
+      <section className="bg-slate-100 dark:bg-slate-100 dark:bg-slate-900 py-responsive">
+        <div className="container-responsive">
+          <AnimatedText type="title" delay={0.1} className="text-responsive-xl font-bold text-slate-900 dark:text-white text-center mb-16">
+            Como Funciona Nosso Modelo Inteligente
+          </AnimatedText>
+
+          <div className="grid grid-responsive-features">
+            <AnimatedCard delay={0.2} className="reveal">
+              <div className="text-center">
+                <div className="bg-orange-600 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-white text-lg sm:text-xl md:text-2xl font-bold">1</span>
+                </div>
+                <h4 className="text-white font-bold mb-1 sm:mb-2 text-sm sm:text-base">Embarcador Cria Cotação</h4>
+                <p className="text-slate-700 dark:text-responsive-xs text-slate-700 dark:text-slate-300">Define produto, NCM, quantidade, localização de coleta e entrega, com prazo para cotação</p>
+              </div>
+            </AnimatedCard>
+
+            <AnimatedCard delay={0.3} className="reveal">
+              <div className="text-center">
+                <div className="bg-orange-600 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-white text-lg sm:text-xl md:text-2xl font-bold">2</span>
+                </div>
+                <h4 className="text-white font-bold mb-1 sm:mb-2 text-sm sm:text-base">Transportadores Concorrem</h4>
+                <p className="text-slate-700 dark:text-responsive-xs text-slate-700 dark:text-slate-300">Todos que transportam esse NCM recebem a cotação e oferecem seus melhores preços</p>
+              </div>
+            </AnimatedCard>
+
+            <AnimatedCard delay={0.4} className="reveal">
+              <div className="text-center">
+                <div className="bg-orange-600 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-white text-lg sm:text-xl md:text-2xl font-bold">3</span>
+                </div>
+                <h4 className="text-white font-bold mb-1 sm:mb-2 text-sm sm:text-base">Embarcador Escolhe</h4>
+                <p className="text-slate-700 dark:text-responsive-xs text-slate-700 dark:text-slate-300">Compara valores, prazos e condições. Escolhe o melhor transportador para seu negócio</p>
+              </div>
+            </AnimatedCard>
+
+            <AnimatedCard delay={0.5} className="reveal">
+              <div className="text-center">
+                <div className="bg-orange-600 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-white text-lg sm:text-xl md:text-2xl font-bold">4</span>
+                </div>
+                <h4 className="text-white font-bold mb-1 sm:mb-2 text-sm sm:text-base">Execução Segura</h4>
+                <p className="text-slate-700 dark:text-responsive-xs text-slate-700 dark:text-slate-300">Coleta confirmada, entrega rastreada, documentos emitidos automaticamente, pagamento seguro</p>
+              </div>
+            </AnimatedCard>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="bg-gradient-to-r from-orange-600 to-blue-900 py-20">
+        <div className="container mx-auto px-4">
+          <AnimatedText type="title" delay={0.1} className="text-slate-900 dark:text-white text-center text-responsive-lg font-bold mb-12">
+            Números que Falam Por Si
+          </AnimatedText>
+          <div className="grid grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
+            <AnimatedCard delay={0.2} className="text-center reveal">
+              <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-1 sm:mb-2 text-sm sm:text-base">43%</div>
+              <p className="text-white/90 font-semibold">Economia Média</p>
+              <p className="text-white/70 text-sm">em Cotações de Frete</p>
+            </AnimatedCard>
+            <AnimatedCard delay={0.3} className="text-center reveal">
+              <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-1 sm:mb-2 text-sm sm:text-base">10K+</div>
+              <p className="text-white/90 font-semibold">Embarcadores</p>
+              <p className="text-white/70 text-sm">Confiando em Nós</p>
+            </AnimatedCard>
+            <AnimatedCard delay={0.4} className="text-center reveal">
+              <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-1 sm:mb-2 text-sm sm:text-base">5K+</div>
+              <p className="text-white/90 font-semibold">Transportadores</p>
+              <p className="text-white/70 text-sm">Crescendo Conosco</p>
+            </AnimatedCard>
+            <AnimatedCard delay={0.5} className="text-center reveal">
+              <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-1 sm:mb-2 text-sm sm:text-base">99.8%</div>
+              <p className="text-white/90 font-semibold">Satisfação</p>
+              <p className="text-white/70 text-sm">De Nossos Clientes</p>
+            </AnimatedCard>
+          </div>
+        </div>
+      </section>
+
+      {/* Diferenciais Section */}
+      <section className="container-responsive py-responsive">
+        <AnimatedText type="title" delay={0.1} className="text-responsive-xl font-bold text-slate-900 dark:text-white text-center mb-6">
+          O Que Nos Diferencia
+        </AnimatedText>
+        <AnimatedText type="subtitle" delay={0.2} className="text-center text-slate-700 dark:text-slate-300 mb-16 max-w-2xl mx-auto">
+          Achei Meu Frete não é apenas uma plataforma - é uma comunidade que impulsiona o crescimento de toda a cadeia logística
+        </AnimatedText>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+          <AnimatedCard delay={0.3} className="card border-l-4 border-green-500">
+            <Gauge className="w-12 h-12 text-green-500 mb-4" />
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Tecnologia Inteligente</h3>
+            <p className="text-slate-700 dark:text-slate-300">
+              Sistema de matching por NCM garante que apenas transportadores relevantes vejam suas cotações, reduzindo tempo de resposta e melhorando qualidade das propostas
+            </p>
+          </AnimatedCard>
+
+          <AnimatedCard delay={0.4} className="card border-l-4 border-blue-500">
+            <Award className="w-12 h-12 text-blue-500 mb-4" />
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Qualidade Garantida</h3>
+            <p className="text-slate-700 dark:text-slate-300">
+              Todos os transportadores são verificados e avaliados pela comunidade. Histórico de desempenho transparente para decisões seguras
+            </p>
+          </AnimatedCard>
+
+          <AnimatedCard delay={0.5} className="card border-l-4 border-red-500">
+            <Briefcase className="w-12 h-12 text-red-500 mb-4" />
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Conformidade Legal Completa</h3>
+            <p className="text-slate-700 dark:text-slate-300">
+              Emissão automática de Nota Fiscal, CT-e e CIOT. Toda documentação gerada conforme legislação vigente para máxima tranquilidade
+            </p>
+          </AnimatedCard>
+
+          <AnimatedCard delay={0.6} className="card border-l-4 border-yellow-500">
+            <Users className="w-12 h-12 text-yellow-500 mb-4" />
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Comunidade Vibrante</h3>
+            <p className="text-slate-700 dark:text-slate-300">
+              Networking, aprendizado e crescimento mútuo. Fóruns, eventos e parcerias que transformam relacionamentos em oportunidades
+            </p>
+          </AnimatedCard>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="bg-slate-100 dark:bg-slate-900 py-20">
+        <div className="container mx-auto px-4">
+          <AnimatedText type="title" delay={0.1} className="text-responsive-xl font-bold text-slate-900 dark:text-white text-center mb-6">
+            Histórias de Sucesso Reais
+          </AnimatedText>
+          <AnimatedText type="subtitle" delay={0.2} className="text-center text-slate-700 dark:text-slate-300 mb-16 max-w-2xl mx-auto">
+            Veja como embarcadores e transportadores estão transformando seus negócios
+          </AnimatedText>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {[
+              {
+                name: 'João Silva',
+                role: 'Embarcador - Indústria Alimentícia',
+                text: 'Economizei 43% nos meus fretes! Em 6 meses, reduzi custos de logística de forma impressionante. A plataforma é simples, eficiente e os transportadores são muito profissionais.',
+                icon: '📦'
+              },
+              {
+                name: 'Maria Oliveira',
+                role: 'Proprietária - Transportadora Média',
+                text: 'Triplicamos nossas oportunidades de frete. Começamos com 5 fretes por mês e agora recebemos 50+ solicitações mensalmente. Crescimento exponencial!',
+                icon: '🚚'
+              },
+              {
+                name: 'Pedro Costa',
+                role: 'Embarcador - E-commerce',
+                text: 'Rastreamento em tempo real, transparência total e preços imbatíveis. Recomendo para todos os colegas. Mudou completamente nossa operação de logística.',
+                icon: '⭐'
+              },
+            ].map((testimonial, idx) => (
+              <AnimatedCard key={idx} delay={0.3 + idx * 0.1} className="card hover:border-orange-600 transition reveal">
+                <div className="text-3xl mb-4">{testimonial.icon}</div>
+                <p className="text-slate-700 dark:text-slate-300 mb-6 leading-relaxed italic">"{testimonial.text}"</p>
+                <div className="border-t border-slate-700 pt-4">
+                  <p className="text-white font-semibold">{testimonial.name}</p>
+                  <p className="text-orange-400 text-sm">{testimonial.role}</p>
+                </div>
+              </AnimatedCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Final Section */}
+      <section className="container mx-auto px-4 py-20">
+        <AnimatedCard delay={0.2} className="bg-gradient-to-r from-orange-600/20 to-blue-900/20 border border-orange-600/40 rounded-2xl p-12 text-center reveal">
+          <AnimatedText type="title" delay={0.3} className="text-4xl font-bold text-slate-900 dark:text-white mb-6">
+            Pronto para Transformar Sua Logística?
+          </AnimatedText>
+          <AnimatedText type="subtitle" delay={0.4} className="text-xl text-slate-700 dark:text-slate-300 mb-8 max-w-2xl mx-auto">
+            Junte-se a milhares de embarcadores e transportadores que já estão economizando, crescendo e profissionalizando suas operações na plataforma Achei Meu Frete
+          </AnimatedText>
+          <AnimatedSection delay={0.5} className="flex flex-col md:flex-row gap-4 justify-center">
+            <Link
+              to="/cadastro"
+              className="btn-primary inline-block text-lg px-10 py-4 font-semibold hover:scale-105 transition-transform"
+            >
+              Cadastre-se Grátis Agora
+            </Link>
+            <a
+              href="#"
+              className="btn-secondary inline-block text-lg px-10 py-4 font-semibold hover:scale-105 transition-transform"
+            >
+              Agende uma Demonstração
+            </a>
+          </AnimatedSection>
+          <p className="text-slate-400 mt-8 text-sm">
+            Sem cartão de crédito necessário. Comece em minutos. Suporte em português 24/7.
+          </p>
+        </AnimatedCard>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

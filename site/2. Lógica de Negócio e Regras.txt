@@ -1,0 +1,87 @@
+2. Lógica de Negócio e Regras
+
+Arquitetura de Negócio: Regras Implementadas
+1. Validações Customizadas
+•	Campos Obrigatórios: Muitos campos das entidades possuem validação de preenchimento (required), garantindo a integridade dos dados, como clienteId em Cotacao e userIdGoogle em PerfilCliente e PerfilTransportadora.
+•	Enumerações (Enums): Campos com valores pré-definidos (enum) garantem a consistência e evitam dados inválidos, exemplos incluem:
+•	Cotacao.status (e.g., "aberta", "em_transito", "finalizada")
+•	PerfilTransportadora.tipoTransportador (e.g., "pj", "autonomo")
+•	Chat.tipo (e.g., "normal", "negociacao_cte")
+•	Pagamento.metodo (e.g., "pix", "cartao_credito")
+•	Faixa de Valores: Campos numéricos têm validações de minimum e maximum, como Avaliacao.nota (1 a 5).
+•	Formatos Específicos: Campos como datas (format: "date-time", format: "date") e CEPs (string com formato esperado) seguem padrões.
+•	Restrições de CPF/CNPJ: Para PerfilTransportadora, o cnpj é obrigatório para PJ, e cpf para autônomos. A combinação dos campos cpfOuCnpj em PerfilCliente reflete esta validação.
+•	Unicidade: E-mails de acesso em Credencial, PerfilCliente e PerfilTransportadora são únicos para garantir que cada perfil tenha um identificador exclusivo.
+•	Documentos Anexados: Para emissão de CT-e, CIOT e MDF-e, a presença de URLs de documentos anexados é validada. Por exemplo, documentoCte para Cotacao quando o cteRegistrado é true.
+•	Preferências de Transportadora (Nova Cotação):
+•	aceitaMotoCarAte100km: Garante que, ao selecionar esta opção, o sistema considerará transportadores de moto/veículo leve com restrição de distância.
+•	aceitaTransportadorSemCNPJ: Informa ao embarcador sobre a não emissão de documentos fiscais, seguro obrigatório e restrições geográficas (apenas entregas regionais/metropolitanas, proibido interestaduais), e atribui total responsabilidade pela escolha ao embarcador.
+•	Padrão: Transportadoras PJ e Autônomos Registrados são sempre incluídos e emitem documentos fiscais completos (CT-e, CIOT, MDF-e), com entregas interestaduais permitidas e seguro de carga conforme a necessidade.
+2. Fluxos de Trabalho (Workflows)
+•	Ciclo de Vida da Cotação:
+•	aberta -> em_andamento / visualizada (após transportadora visualizar/interagir)
+•	em_andamento -> aguardando_pagamento (após cliente aceitar uma RespostaCotacao do tipo CIF)
+•	aguardando_pagamento -> aceita (após pagamento ser processado)
+•	aceita -> aguardando_coleta (após confirmação de coleta)
+•	aguardando_coleta -> em_transito (após transportadora registrar CT-e/CIOT e rastreamento)
+•	em_transito -> aguardando_aprovacao_cte (se houver alteração de valor no CT-e/CIOT)
+•	aguardando_aprovacao_cte -> em_transito ou cancelada (após aprovação/rejeição do CT-e/CIOT pelo cliente)
+•	em_transito -> finalizada (após upload do canhoto assinado e avaliação do cliente)
+•	cancelada, contestada, devolvida são estados finais ou intermediários de resolução de problemas.
+•	Negociação de CT-e: Um fluxo específico (Chat.tipo: "negociacao_cte") permite que o transportador proponha um novo valor se o valor fiscal for diferente do cotado. O cliente pode aceitar, rejeitar ou fazer contrapropostas (limitado a 2 tentativas em Chat.tentativasNegociacao).
+•	Cadastro de Usuários: Clientes e Transportadoras passam por um processo de registro que inclui:
+•	CompletarCadastro (selecionar tipo de perfil: cliente ou transportadora).
+•	PerfilCliente / PerfilTransportadora com status: "pending" aguardando aprovação administrativa.
+•	Possibilidade de status: "rejected" com motivoRejeicao.
+•	Confirmação de Coleta: Exige um codigoConfirmacaoColeta para validação da coleta.
+•	Emissão de Documentos: Sequência lógica para emissão:
+•	Registrar CT-e/CIOT (se aplicável)
+•	Registrar MDF-e (se aplicável e opcional)
+•	Informar URL de rastreamento e código
+•	Upload de canhoto de entrega para finalizar.
+•	Troca de Perfil: Um usuário pode ter múltiplos perfis (cliente, transportadora) e alternar entre eles via Layout.js e Credencial.
+3. Triggers e Automações
+•	Atualização de Status de Cotação: Ações como aceitar uma resposta, registrar um CT-e, confirmar coleta ou finalizar uma entrega automaticamente atualizam o Cotacao.status.
+•	Criação de Chat de Negociação: Quando a transportadora informa um valorFinalTransportadora diferente do valorOriginalCotacao e registra o CT-e/CIOT, um chat de negociação (Chat.tipo: "negociacao_cte") é iniciado automaticamente.
+•	Notificações (Inferred): A presença de NotificationBells no layout.js sugere que existem triggers para notificar usuários sobre:
+•	Novas cotações disponíveis (transportadora).
+•	Cotações aceitas (transportadora).
+•	Mensagens não lidas em chats (transportadora e cliente).
+•	Cotações aguardando aprovação de CT-e (cliente).
+•	Cotações aguardando pagamento (cliente).
+•	Cotações finalizadas e pendentes de avaliação (cliente).
+•	Bloqueio por Atraso: Se uma transportadora atrasa a entrega e/ou não informa o atraso, o sistema pode bloquear o recebimento de novas cotações (PerfilTransportadora.bloqueadaCotacoes).
+•	Cálculo de Avaliação Média: Após uma Avaliacao ou AvaliacaoCliente ser registrada, um trigger atualiza PerfilTransportadora.avaliacaoMedia e PerfilTransportadora.totalAvaliacoes (e similar para cliente).
+•	Registros Financeiros: Ao finalizar uma cotação, um registro é adicionado/atualizado na entidade Financeiro da transportadora para o mês corrente.
+4. Cálculos e Fórmulas Aplicadas
+•	Cálculo de Preço Total da Resposta: RespostaCotacao.valorTotal é calculado a partir de valorBase + valorPalete + valorUrgente + valorFragil + valorCargaDedicada + valorSeguro.
+•	Cálculo de Atraso de Entrega: Funções como calcularDiasRestantes, formatarDiasRestantes e getClasseDiasRestantes (vistas em EmEntregaTransportadora) calculam e formatam os dias restantes ou atrasados para a entrega.
+•	Taxa da Plataforma: Uma taxa fixa de 5% é aplicada ao valorFinalTransportadora da cotação (valorComissao = valorFinalTransportadora * 0.05).
+•	Valor a Receber pela Transportadora: valorFinalTransportadora - valorComissao.
+•	Cálculo de Cashback (Cliente Premium): PerfilCliente.saldoCashback pode ser atualizado com base em historicoValoresAMais (15% de valores a mais pagos).
+•	Créditos e Descontos Premium: Os campos em PacotePremium e AssinaturaPremium (beneficioDesconto, saldoDescontoPremium, cancelamentosMesAtual, entregasSemMultaMesAtual, diasDestaqueRestantes) indicam cálculos e gestão de benefícios por nível de pacote.
+5. Permissões e Controles de Acesso por Tipo de Usuário
+•	Baseado em Papéis (User.role e Credencial.tipo):
+•	Administrador (Admin Master): Acesso a funcionalidades administrativas (Dashboard Admin, Aprovar Cadastros, Financeiro Admin), independentemente de ser cliente ou transportadora primário (via e-mail específico: evoluindoumtrader@gmail.com).
+•	Cliente:
+•	Criação de cotações (NovaCotacao).
+•	Visualização e gestão de seus produtos, destinatários, endereços de coleta.
+•	Acompanhamento de cotações (Cotacoes, CotacoesAceitas, ConfirmarColeta, CotacoesColetadas, CotacoesFinalizadasCliente).
+•	Interação em chats com transportadoras (Chats).
+•	Aprovação/Rejeição de CT-e com alteração de valor (NegociacaoCTe).
+•	Gestão de créditos e pacotes premium.
+•	Avaliação de transportadoras (Avaliacao).
+•	Transportadora:
+•	Gestão de perfil (PerfilTransportadora).
+•	Definição de opções de envio, NCMs atendidos e regiões atendidas.
+•	Visualização de cotações disponíveis (CotacoesDisponiveis) e aceitas (CotacoesAceitasTransportadora).
+•	Resposta a cotações (ResponderCotacao).
+•	Emissão de CT-e, CIOT, MDF-e (BiparCTe, EmitirCIOT, EmitirMDFe).
+•	Gestão de entregas em trânsito (EmEntregaTransportadora).
+•	Interação em chats com clientes (ChatsTransportadora).
+•	Gestão financeira (FinanceiroTransportadora).
+•	Avaliação de clientes (AvaliacaoCliente).
+•	Acesso a Dados Próprios: Usuários (tanto clientes quanto transportadoras) só podem visualizar e modificar seus próprios dados (ex: uma transportadora só vê as cotações que respondeu ou aceitou; um cliente só vê suas cotações).
+•	Gerenciamento de Perfis: A alternância entre perfis (cliente/transportadora) é controlada pelo sistema, garantindo que o usuário esteja operando no contexto correto.
+•	Perfis Pendentes/Rejeitados/Bloqueados: Perfis com status diferente de "approved" podem ter acesso restrito a certas funcionalidades (ex: transportadoras pendentes não podem receber cotações; bloqueadas não podem operar).
+•	Acesso Público: Páginas como "Registro" e "CompletarCadastro" são acessíveis publicamente antes da autenticação e seleção de perfil.

@@ -1,0 +1,78 @@
+{
+  "name": "Produto",
+  "type": "object",
+  "properties": {
+    "nome": {
+      "type": "string",
+      "description": "Nome do produto EM MAI\u00daSCULAS"
+    },
+    "ncmCode": {
+      "type": "string",
+      "description": "C\u00f3digo NCM do produto"
+    },
+    "ncmClassificacao": {
+      "type": "string",
+      "description": "Classifica\u00e7\u00e3o NCM"
+    },
+    "unidadeMedida": {
+      "type": "string",
+      "enum": [
+        "kg",
+        "ton",
+        "litro",
+        "m3",
+        "unidade",
+        "saca",
+        "palete",
+        "container",
+        "granel"
+      ],
+      "default": "kg",
+      "description": "Unidade de medida do produto"
+    },
+    "pesoKg": {
+      "type": "number",
+      "description": "Peso em kg"
+    },
+    "larguraM": {
+      "type": "number",
+      "description": "Largura em metros"
+    },
+    "alturaM": {
+      "type": "number",
+      "description": "Altura em metros"
+    },
+    "comprimentoM": {
+      "type": "number",
+      "description": "Comprimento em metros"
+    },
+    "valorUnitario": {
+      "type": "number",
+      "default": 0,
+      "description": "Valor unit\u00e1rio padr\u00e3o do produto"
+    },
+    "flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Flags de status do produto (fragil, quimico, liquido, granel, delicado, perecivel, refrigerado, congelado, inflamavel, corrosivo, toxico, explosivo, radioativo, biologico, volumoso, pesado, empilhavel, nao_empilhavel, requer_cuidado, alto_valor)"
+    },
+    "observacoes": {
+      "type": "string"
+    },
+    "clienteId": {
+      "type": "string",
+      "description": "ID do cliente que criou o produto"
+    }
+  },
+  "required": [
+    "nome",
+    "ncmCode",
+    "pesoKg",
+    "larguraM",
+    "alturaM",
+    "comprimentoM"
+  ]
+}

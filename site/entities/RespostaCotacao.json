@@ -1,0 +1,95 @@
+{
+  "name": "RespostaCotacao",
+  "type": "object",
+  "properties": {
+    "cotacaoId": {
+      "type": "string",
+      "description": "ID da cota\u00e7\u00e3o"
+    },
+    "transportadoraId": {
+      "type": "string",
+      "description": "ID da transportadora"
+    },
+    "transportadoraNome": {
+      "type": "string"
+    },
+    "transportadoraLogo": {
+      "type": "string"
+    },
+    "isPremium": {
+      "type": "boolean",
+      "default": false
+    },
+    "opcaoEnvioId": {
+      "type": "string",
+      "description": "ID da op\u00e7\u00e3o de envio"
+    },
+    "opcaoEnvioNome": {
+      "type": "string"
+    },
+    "valorBase": {
+      "type": "number",
+      "description": "Valor base sem opcionais"
+    },
+    "valorPalete": {
+      "type": "number",
+      "description": "Valor adicional para palete",
+      "default": 0
+    },
+    "valorUrgente": {
+      "type": "number",
+      "description": "Valor adicional para urgente",
+      "default": 0
+    },
+    "valorFragil": {
+      "type": "number",
+      "description": "Valor adicional para fr\u00e1gil",
+      "default": 0
+    },
+    "valorCargaDedicada": {
+      "type": "number",
+      "description": "Valor adicional para carga dedicada",
+      "default": 0
+    },
+    "seguroCargaId": {
+      "type": "string",
+      "description": "ID do seguro de carga selecionado"
+    },
+    "seguradora": {
+      "type": "string",
+      "description": "Nome da seguradora escolhida"
+    },
+    "tipoCobertura": {
+      "type": "string",
+      "description": "Tipo de cobertura do seguro"
+    },
+    "valorSeguro": {
+      "type": "number",
+      "default": 0,
+      "description": "Valor do seguro de carga"
+    },
+    "valorTotal": {
+      "type": "number",
+      "description": "Valor total com todas as op\u00e7\u00f5es selecionadas + seguro"
+    },
+    "tempoEntregaDias": {
+      "type": "integer",
+      "description": "Tempo de entrega em dias"
+    },
+    "observacoes": {
+      "type": "string"
+    },
+    "dataHoraResposta": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "cotacaoId",
+    "transportadoraId",
+    "opcaoEnvioId",
+    "valorBase",
+    "valorTotal",
+    "tempoEntregaDias"
+  ]
+}

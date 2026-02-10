@@ -1,0 +1,128 @@
+5. Fluxos Funcionais
+
+Fluxos Principais da Aplicação
+1. Fluxo de Cadastro/Login de Usuários
+Este fluxo descreve como um novo usuário é integrado ao sistema e como um usuário existente acessa a plataforma e seus diferentes perfis.
+•	Entidades Envolvidas: User, Credencial, PerfilCliente, PerfilTransportadora
+•	Passo a Passo:
+1.	Acesso Inicial: O usuário tenta acessar o aplicativo ou é convidado por um administrador.
+2.	Autenticação Google: O usuário realiza o login via Google OAuth (gerenciado pelo Base44).
+•	Estado: Usuário Autenticado
+•	Transição: Sucesso no login Google.
+3.	Verificação de Perfil: O sistema verifica se o User possui um tipo de perfil (cliente ou transportadora) e um perfilAtivoId associado.
+•	Estado: Usuário Autenticado, sem perfil definido (se tipo e perfilAtivoId forem nulos).
+•	Transição: Redireciona para a página CompletarCadastro.
+4.	Completar Cadastro (CompletarCadastro):
+•	O usuário escolhe seu tipo de perfil inicial: "Cliente" ou "Transportadora".
+•	Estado: Aguardando seleção de tipo de perfil
+•	Transição: Seleção de "Cliente" ou "Transportadora".
+•	O sistema cria (ou associa) uma Credencial e um PerfilCliente ou PerfilTransportadora para o usuário, com status: "pending".
+5.	Revisão e Aprovação do Perfil:
+•	O perfil recém-criado (seja PerfilCliente ou PerfilTransportadora) entra no estado status: "pending".
+•	Estado: Perfil Pendente de Aprovação
+•	Transição: Um administrador revisa e aprova o perfil.
+•	Se aprovado, o perfil muda para status: "approved". Se rejeitado, para status: "rejected" com um motivoRejeicao.
+6.	Acesso ao Dashboard: Após a aprovação do perfil, o usuário é direcionado ao dashboard correspondente ao seu tipo de perfil (Dashboard para cliente, DashboardTransportadora para transportadora).
+•	Estado: Perfil Ativo
+•	Transição: Acesso ao dashboard.
+7.	Troca de Perfil (Opcional): Se o usuário tiver mais de um perfil (Credencial para cliente e transportadora), ele pode trocar entre eles no Layout.
+•	Estado: Perfil Ativo
+•	Transição: Troca para outro perfil ativo.
+2. Fluxo de Criação e Gerenciamento de Cotações (Cliente)
+Este fluxo abrange desde a solicitação de uma cotação até a confirmação da coleta e o acompanhamento inicial da entrega do ponto de vista do cliente.
+•	Entidades Envolvidas: PerfilCliente, Produto, Destinatario, EnderecoColeta, Cotacao, RespostaCotacao, Chat, Pagamento, Avaliacao
+•	Passo a Passo:
+1.	Iniciar Nova Cotação (NovaCotacao):
+•	O cliente preenche os detalhes da carga: produtos, volumes, peso, valor da nota fiscal.
+•	Seleciona ou cadastra Destinatario e EnderecoColeta.
+•	Especifica tipo de frete (CIF/FOB), serviços adicionais, e data/hora de coleta.
+•	Estado da Cotação: aberta
+•	Transição: Cotação criada.
+2.	Transportadoras Respondem:
+•	Transportadoras qualificadas (NCM, Região Atendida) visualizam a cotação em CotacoesDisponiveis.
+•	Transportadoras enviam RespostaCotacaos.
+•	Estado da Cotação: em_andamento ou visualizada (após a transportadora interagir).
+•	Transição: Respostas de transportadoras recebidas.
+3.	Cliente Analisa Respostas (Cotacoes):
+•	O cliente visualiza as RespostaCotacaos recebidas.
+•	Estado da Cotação: em_andamento
+•	Transição: Cliente escolhe uma RespostaCotacao.
+4.	Aceite da Cotação:
+•	O cliente seleciona a RespostaCotacao desejada.
+•	Estado da Cotação:
+•	Se tipoFrete: "CIF": aguardando_pagamento
+•	Se tipoFrete: "FOB": aguardando_coleta
+•	Transição: Cliente aceita uma resposta, cotacao.respostaSelecionadaId é preenchido.
+5.	Pagamento (Apenas CIF):
+•	Para fretes CIF, o cliente realiza o pagamento.
+•	Entidade: Pagamento é criada.
+•	Estado da Cotação: processando -> pago (no Pagamento), então aguardando_coleta (na Cotacao).
+•	Transição: Pagamento aprovado.
+6.	Confirmação de Coleta (ConfirmarColeta):
+•	Após a coleta, o cliente informa o codigoConfirmacaoColeta para a transportadora.
+•	Estado da Cotação: aguardando_coleta -> em_transito
+•	Transição: Coleta confirmada.
+7.	Negociação de CT-e (Opcional, NegociacaoCTe):
+•	Se a transportadora registra um CT-e com valor diferente, um Chat.tipo: "negociacao_cte" é iniciado.
+•	O cliente pode aprovar, rejeitar ou contra-propor.
+•	Estado do Chat: ativo -> aprovado ou rejeitado_final.
+•	Estado da Cotação: aguardando_aprovacao_cte -> em_transito (após aprovação).
+•	Transição: Resolução da negociação do CT-e.
+8.	Acompanhamento da Entrega (CotacoesColetadas / DetalheEntregaCliente):
+•	O cliente acompanha o status da entrega.
+•	Estado da Cotação: em_transito
+•	Transição: Nenhuma, apenas monitoramento.
+9.	Finalização e Avaliação (CotacoesFinalizadasCliente):
+•	Após a entrega, o cliente é solicitado a avaliar a transportadora.
+•	Entidade: Avaliacao é criada.
+•	Estado da Cotação: finalizada, avaliada: true.
+•	Transição: Cotação finalizada e avaliada.
+3. Fluxo de Gerenciamento de Entregas (Transportadora)
+Este fluxo detalha as ações da transportadora desde a resposta a uma cotação até a finalização da entrega e a gestão financeira.
+•	Entidades Envolvidas: PerfilTransportadora, OpcaoEnvio, NCMAtendido, RegiaoAtendida, Cotacao, RespostaCotacao, Chat, Financeiro, AvaliacaoCliente
+•	Passo a Passo:
+1.	Configuração do Perfil (PerfilTransportadora, OpcaoEnvio, NCMAtendido, RegiaoAtendida):
+•	A transportadora configura seu perfil, tipos de veículos, NCMs que atende e regiões de atuação.
+•	Estado do Perfil: status: "pending" -> approved
+•	Transição: Perfil completo e aprovado.
+2.	Visualização de Cotações Disponíveis (CotacoesDisponiveis):
+•	A transportadora vê cotações compatíveis com seu perfil.
+•	Estado da Cotação: aberta, em_andamento, visualizada
+•	Transição: Nenhuma, apenas visualização.
+3.	Resposta à Cotação (ResponderCotacao):
+•	A transportadora envia uma RespostaCotacao com valor e prazo.
+•	Estado da Cotação: em_andamento
+•	Transição: RespostaCotacao enviada.
+4.	Cotações Aceitas (CotacoesAceitasTransportadora):
+•	O cliente aceita uma RespostaCotacao da transportadora.
+•	Estado da Cotação: aceita
+•	Transição: Cliente aceita a resposta.
+5.	Confirmação de Coleta:
+•	A transportadora recebe o codigoConfirmacaoColeta do cliente.
+•	Estado da Cotação: aceita -> aguardando_coleta -> em_transito
+•	Transição: Coleta confirmada.
+6.	Registro de Documentos Fiscais (BiparCTe, EmitirCIOT, EmitirMDFe):
+•	A transportadora registra o codigoCTe (ou codigoCIOT) e urlRastreamento e codigoRastreio.
+•	Para autônomos, EmitirCIOT é obrigatório.
+•	EmitirMDFe é opcional.
+•	Estado da Cotação: em_transito, com cteRegistrado: true, ciotRegistrado: true, etc.
+•	Transição: Documentos e rastreio registrados.
+7.	Negociação de CT-e (Opcional, Via Chat):
+•	Se o valor do CT-e/CIOT for diferente do cotado, a transportadora inicia uma negociação com o cliente via chat.
+•	Estado do Chat: ativo -> aprovado ou rejeitado_final.
+•	Estado da Cotação: aguardando_aprovacao_cte.
+•	Transição: Resolução da negociação do CT-e.
+8.	Entrega e Finalização (EmEntregaTransportadora):
+•	A transportadora realiza a entrega.
+•	Em caso de atraso, pode informar o cliente via ModalInformarAtraso.
+•	Após a entrega, faz o upload do documentoCanhoto (comprovante de entrega assinado).
+•	Estado da Cotação: em_transito -> finalizada
+•	Transição: Upload do canhoto.
+9.	Avaliação do Cliente:
+•	A transportadora é solicitada a avaliar o cliente.
+•	Entidade: AvaliacaoCliente é criada.
+•	Transição: Cliente avaliado.
+10.	Gestão Financeira (FinanceiroTransportadora):
+•	O sistema registra automaticamente os valores devidos à transportadora no Financeiro mensal.
+•	Entidade: Financeiro é atualizada.
+•	Transição: Nenhuma, automação pós-finalização.

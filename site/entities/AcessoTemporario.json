@@ -1,0 +1,64 @@
+{
+  "name": "AcessoTemporario",
+  "type": "object",
+  "properties": {
+    "cotacaoId": {
+      "type": "string",
+      "description": "ID da cota\u00e7\u00e3o relacionada"
+    },
+    "login": {
+      "type": "string",
+      "description": "Login tempor\u00e1rio gerado"
+    },
+    "senha": {
+      "type": "string",
+      "description": "Senha tempor\u00e1ria gerada"
+    },
+    "criadoPor": {
+      "type": "string",
+      "description": "ID de quem gerou o acesso"
+    },
+    "tipoUsuario": {
+      "type": "string",
+      "enum": [
+        "transportadora",
+        "cliente"
+      ],
+      "description": "Tipo de usu\u00e1rio que gerou"
+    },
+    "dataExpiracao": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora de expira\u00e7\u00e3o do acesso"
+    },
+    "acessos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dataHora": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ip": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Log de acessos"
+    },
+    "ativo": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "cotacaoId",
+    "login",
+    "senha",
+    "criadoPor",
+    "tipoUsuario",
+    "dataExpiracao"
+  ]
+}

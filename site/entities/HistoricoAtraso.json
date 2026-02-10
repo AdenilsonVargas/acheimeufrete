@@ -1,0 +1,94 @@
+{
+  "name": "HistoricoAtraso",
+  "type": "object",
+  "properties": {
+    "cotacaoId": {
+      "type": "string",
+      "description": "ID da cota\u00e7\u00e3o atrasada"
+    },
+    "transportadoraId": {
+      "type": "string",
+      "description": "ID da transportadora"
+    },
+    "clienteId": {
+      "type": "string",
+      "description": "ID do cliente"
+    },
+    "dataPrevistaOriginal": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data prevista original de entrega"
+    },
+    "dataNovaPrevisao": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Nova data prevista informada pela transportadora"
+    },
+    "dataInicioAtraso": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora que o atraso iniciou"
+    },
+    "motivoAtraso": {
+      "type": "string",
+      "description": "Motivo do atraso informado pela transportadora"
+    },
+    "atrasoSegundaData": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se houve atraso tamb\u00e9m na segunda data prevista"
+    },
+    "dataEntregaReal": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data real que a entrega foi finalizada"
+    },
+    "valorComissao": {
+      "type": "number",
+      "description": "Valor da comiss\u00e3o da cota\u00e7\u00e3o (5% do valor total)"
+    },
+    "multaAplicada": {
+      "type": "number",
+      "default": 0,
+      "description": "Valor de multa aplicada (se houver)"
+    },
+    "tipoMulta": {
+      "type": "string",
+      "enum": [
+        "nenhuma",
+        "mensal_50",
+        "anual_25"
+      ],
+      "default": "nenhuma",
+      "description": "Tipo de multa aplicada"
+    },
+    "mes": {
+      "type": "string",
+      "description": "M\u00eas de refer\u00eancia (YYYY-MM)"
+    },
+    "ano": {
+      "type": "string",
+      "description": "Ano de refer\u00eancia (YYYY)"
+    },
+    "contabilizadoMes": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se foi contabilizado na contagem mensal"
+    },
+    "contabilizadoAno": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se foi contabilizado na contagem anual"
+    }
+  },
+  "required": [
+    "cotacaoId",
+    "transportadoraId",
+    "clienteId",
+    "dataPrevistaOriginal",
+    "dataInicioAtraso",
+    "valorComissao",
+    "mes",
+    "ano"
+  ]
+}

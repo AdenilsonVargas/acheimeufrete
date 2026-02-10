@@ -1,0 +1,88 @@
+{
+  "name": "Pagamento",
+  "type": "object",
+  "properties": {
+    "clienteId": {
+      "type": "string",
+      "description": "ID do cliente que fez o pagamento"
+    },
+    "cotacaoId": {
+      "type": "string",
+      "description": "ID da cota\u00e7\u00e3o relacionada (se aplic\u00e1vel)"
+    },
+    "tipo": {
+      "type": "string",
+      "enum": [
+        "cotacao",
+        "creditos",
+        "premium"
+      ],
+      "description": "Tipo de pagamento"
+    },
+    "valor": {
+      "type": "number",
+      "description": "Valor do pagamento"
+    },
+    "metodo": {
+      "type": "string",
+      "enum": [
+        "creditos",
+        "cartao_credito",
+        "cartao_debito",
+        "pix",
+        "boleto",
+        "infinity_pay"
+      ],
+      "description": "M\u00e9todo de pagamento utilizado"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pendente",
+        "processando",
+        "aprovado",
+        "rejeitado",
+        "cancelado",
+        "estornado"
+      ],
+      "default": "pendente",
+      "description": "Status do pagamento"
+    },
+    "transacaoId": {
+      "type": "string",
+      "description": "ID da transa\u00e7\u00e3o no gateway de pagamento"
+    },
+    "gateway": {
+      "type": "string",
+      "description": "Nome do gateway utilizado (Infinity Pay, etc)"
+    },
+    "dataHoraPagamento": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora do pagamento"
+    },
+    "dataHoraAprovacao": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora da aprova\u00e7\u00e3o"
+    },
+    "comprovante": {
+      "type": "string",
+      "description": "URL do comprovante de pagamento"
+    },
+    "observacoes": {
+      "type": "string",
+      "description": "Observa\u00e7\u00f5es sobre o pagamento"
+    },
+    "dadosAdicionais": {
+      "type": "object",
+      "description": "Dados adicionais do pagamento (parcelas, etc)"
+    }
+  },
+  "required": [
+    "clienteId",
+    "tipo",
+    "valor",
+    "metodo"
+  ]
+}

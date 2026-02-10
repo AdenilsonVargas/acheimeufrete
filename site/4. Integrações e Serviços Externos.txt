@@ -1,0 +1,15 @@
+4. Integrações e Serviços Externos
+
+Com base nas informações fornecidas, posso listar as integrações configuradas e serviços externos utilizados:
+1. APIs de Terceiros Conectadas / Serviços Externos Utilizados
+As integrações disponíveis no seu aplicativo são acessadas através do pacote base44.integrations.Core. Isso indica que os seguintes serviços externos estão sendo utilizados:
+•	Serviço de LLM (Large Language Model): Utilizado para gerar respostas a partir de prompts, com a opção de adicionar contexto da internet ou de arquivos (InvokeLLM).
+•	Serviço de E-mail: Para envio de e-mails diretamente do aplicativo (SendEmail).
+•	Serviço de Armazenamento de Arquivos: Para fazer upload de arquivos públicos (UploadFile) e privados (UploadPrivateFile), e para criar URLs assinadas para arquivos privados (CreateFileSignedUrl).
+•	Serviço de Geração de Imagens AI: Para criar imagens a partir de prompts (GenerateImage).
+•	Serviço de Extração de Dados de Documentos: Para extrair informações estruturadas de arquivos enviados, como PDFs, imagens ou CSVs (ExtractDataFromUploadedFile).
+2. Webhooks Configurados
+As informações disponíveis não detalham webhooks configurados no aplicativo. Webhooks são geralmente configurações de backend para receber eventos de outros serviços, e essa informação não é exposta diretamente no contexto do frontend.
+3. Credenciais Necessárias
+•	Não são expostas no código do aplicativo: A plataforma Base44 gerencia as credenciais para todas as integrações. O desenvolvedor (construtor do aplicativo) configura e autoriza essas credenciais através do painel de controle do Base44, e o SDK base44.integrations as utiliza de forma segura no backend.
+•	Autenticação de APIs: As chamadas para essas APIs de integração são autenticadas por meio do token de sessão do usuário logado no aplicativo, que é gerenciado automaticamente pelo Base44.

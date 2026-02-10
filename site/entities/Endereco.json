@@ -1,0 +1,56 @@
+{
+  "name": "Endereco",
+  "type": "object",
+  "properties": {
+    "userId": {
+      "type": "string",
+      "description": "ID do usu\u00e1rio dono do endere\u00e7o"
+    },
+    "tipo": {
+      "type": "string",
+      "enum": [
+        "comercial",
+        "residencial"
+      ],
+      "default": "comercial"
+    },
+    "cep": {
+      "type": "string"
+    },
+    "logradouro": {
+      "type": "string"
+    },
+    "numero": {
+      "type": "string"
+    },
+    "complemento": {
+      "type": "string"
+    },
+    "bairro": {
+      "type": "string"
+    },
+    "cidade": {
+      "type": "string"
+    },
+    "estado": {
+      "type": "string"
+    },
+    "pais": {
+      "type": "string",
+      "default": "Brasil"
+    },
+    "principal": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "userId",
+    "cep",
+    "logradouro",
+    "numero",
+    "bairro",
+    "cidade",
+    "estado"
+  ]
+}

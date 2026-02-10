@@ -1,0 +1,62 @@
+{
+  "name": "Destinatario",
+  "type": "object",
+  "properties": {
+    "nomeCompleto": {
+      "type": "string",
+      "description": "Nome completo EM MAI\u00daSCULAS"
+    },
+    "cep": {
+      "type": "string"
+    },
+    "logradouro": {
+      "type": "string"
+    },
+    "numero": {
+      "type": "string"
+    },
+    "complemento": {
+      "type": "string"
+    },
+    "bairro": {
+      "type": "string"
+    },
+    "cidade": {
+      "type": "string"
+    },
+    "estado": {
+      "type": "string"
+    },
+    "pais": {
+      "type": "string",
+      "default": "Brasil"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Latitude do endere\u00e7o"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Longitude do endere\u00e7o"
+    },
+    "aceitaMotoCarAte100km": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se aceita motos/carros para entregas at\u00e9 100km"
+    },
+    "clienteId": {
+      "type": "string",
+      "description": "ID do cliente que criou o destinat\u00e1rio"
+    }
+  },
+  "required": [
+    "nomeCompleto",
+    "cep",
+    "logradouro",
+    "numero",
+    "bairro",
+    "cidade",
+    "estado",
+    "clienteId"
+  ]
+}

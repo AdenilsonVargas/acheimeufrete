@@ -1,0 +1,548 @@
+{
+  "name": "Cotacao",
+  "type": "object",
+  "properties": {
+    "clienteId": {
+      "type": "string",
+      "description": "ID do cliente"
+    },
+    "produtoId": {
+      "type": "string",
+      "description": "ID do produto principal"
+    },
+    "produtoNome": {
+      "type": "string"
+    },
+    "produtoNCM": {
+      "type": "string"
+    },
+    "produtoPeso": {
+      "type": "number"
+    },
+    "produtoUnidade": {
+      "type": "string",
+      "description": "Unidade de medida do produto"
+    },
+    "produtosLista": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "produtoId": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "ncmCode": {
+            "type": "string"
+          },
+          "quantidade": {
+            "type": "number"
+          },
+          "valorUnitario": {
+            "type": "number"
+          },
+          "pesoUnitario": {
+            "type": "number"
+          },
+          "unidade": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Lista de produtos na cota\u00e7\u00e3o"
+    },
+    "destinatarioId": {
+      "type": "string",
+      "description": "ID do destinat\u00e1rio"
+    },
+    "destinatarioCep": {
+      "type": "string"
+    },
+    "destinatarioCidade": {
+      "type": "string"
+    },
+    "destinatarioEstado": {
+      "type": "string"
+    },
+    "enderecoColetaId": {
+      "type": "string",
+      "description": "ID do endere\u00e7o de coleta selecionado"
+    },
+    "enderecoColetaCep": {
+      "type": "string",
+      "description": "CEP do endere\u00e7o de coleta (origem)"
+    },
+    "enderecoColetaCidade": {
+      "type": "string",
+      "description": "Cidade do endere\u00e7o de coleta (origem)"
+    },
+    "enderecoColetaEstado": {
+      "type": "string",
+      "description": "Estado do endere\u00e7o de coleta (origem)"
+    },
+    "ehColetaReversa": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se \u00e9 uma coleta reversa"
+    },
+    "distanciaKm": {
+      "type": "number",
+      "description": "Dist\u00e2ncia em km entre coleta e destino"
+    },
+    "aceitaMotoCarAte100km": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se aceita moto/carro at\u00e9 100km"
+    },
+    "aceitaTransportadorSemCNPJ": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se aceita transportador pessoa f\u00edsica (CPF) sem emiss\u00e3o de documentos fiscais"
+    },
+    "valorNotaFiscal": {
+      "type": "number",
+      "description": "Valor total da nota fiscal"
+    },
+    "quantidadeVolumes": {
+      "type": "integer",
+      "description": "Quantidade de volumes"
+    },
+    "pesoTotal": {
+      "type": "number",
+      "description": "Peso total em kg"
+    },
+    "volumes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "largura": {
+            "type": "number"
+          },
+          "altura": {
+            "type": "number"
+          },
+          "comprimento": {
+            "type": "number"
+          },
+          "peso": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Medidas de cada volume"
+    },
+    "tipoFrete": {
+      "type": "string",
+      "enum": [
+        "CIF",
+        "FOB"
+      ],
+      "description": "CIF ou FOB"
+    },
+    "servicosAdicionais": {
+      "type": "object",
+      "properties": {
+        "precisaPalete": {
+          "type": "boolean",
+          "default": false
+        },
+        "ehUrgente": {
+          "type": "boolean",
+          "default": false
+        },
+        "ehFragil": {
+          "type": "boolean",
+          "default": false
+        },
+        "precisaCargaDedicada": {
+          "type": "boolean",
+          "default": false
+        },
+        "precisaMontagem": {
+          "type": "boolean",
+          "default": false
+        },
+        "precisaInstalacao": {
+          "type": "boolean",
+          "default": false
+        },
+        "precisaEscoltaArmada": {
+          "type": "boolean",
+          "default": false
+        },
+        "precisaArmazenamento": {
+          "type": "boolean",
+          "default": false
+        },
+        "mesesArmazenamento": {
+          "type": "integer",
+          "default": 0
+        },
+        "precisaSeguro": {
+          "type": "boolean",
+          "default": false
+        },
+        "valorSeguro": {
+          "type": "number",
+          "default": 0
+        }
+      },
+      "description": "Servi\u00e7os adicionais solicitados"
+    },
+    "tempoCotacaoMinutos": {
+      "type": "integer",
+      "description": "Tempo para cota\u00e7\u00e3o em minutos"
+    },
+    "dataHoraColeta": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora da coleta"
+    },
+    "dataHoraInicio": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora de in\u00edcio da cota\u00e7\u00e3o"
+    },
+    "dataHoraFim": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora de fim da cota\u00e7\u00e3o"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "aberta",
+        "em_andamento",
+        "visualizada",
+        "aguardando_pagamento",
+        "aceita",
+        "aguardando_coleta",
+        "em_transito",
+        "aguardando_aprovacao_cte",
+        "aguardando_confirmacao",
+        "finalizada",
+        "cancelada",
+        "contestada",
+        "devolvida"
+      ],
+      "default": "aberta"
+    },
+    "respostaSelecionadaId": {
+      "type": "string",
+      "description": "ID da resposta escolhida pelo cliente"
+    },
+    "codigoConfirmacaoColeta": {
+      "type": "string",
+      "description": "C\u00f3digo de 5 d\u00edgitos para confirmar coleta"
+    },
+    "coletaConfirmada": {
+      "type": "boolean",
+      "default": false
+    },
+    "dataHoraColetaConfirmada": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "prazoEntregaDias": {
+      "type": "integer",
+      "description": "Prazo original de entrega em dias informado pela transportadora"
+    },
+    "dataPrevistaEntrega": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data prevista calculada para entrega baseado no prazo original"
+    },
+    "dataNovaPrevisaoEntrega": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Nova data de entrega informada pela transportadora em caso de atraso"
+    },
+    "motivoAtraso": {
+      "type": "string",
+      "description": "Motivo do atraso informado pela transportadora"
+    },
+    "atrasada": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se a entrega est\u00e1 atrasada"
+    },
+    "dataInicioAtraso": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora em que a entrega passou a estar atrasada"
+    },
+    "atrasoInformadoCliente": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se a transportadora j\u00e1 informou o atraso ao cliente"
+    },
+    "urlRastreamento": {
+      "type": "string",
+      "description": "URL de rastreamento da transportadora"
+    },
+    "codigoRastreio": {
+      "type": "string",
+      "description": "C\u00f3digo de rastreio"
+    },
+    "codigoCTe": {
+      "type": "string",
+      "description": "C\u00f3digo do CT-e informado pela transportadora"
+    },
+    "cteRegistrado": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se o CT-e foi registrado"
+    },
+    "dataHoraCTeRegistrado": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora do registro do CT-e"
+    },
+    "motivoAumentoCTe": {
+      "type": "string",
+      "description": "Motivo do aumento de valor no CT-e"
+    },
+    "cteAprovadoCliente": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se o cliente aprovou o valor do CT-e"
+    },
+    "cteRejeitadoCliente": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se o cliente rejeitou o valor do CT-e"
+    },
+    "dataHoraAprovacaoCTe": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora da aprova\u00e7\u00e3o/rejei\u00e7\u00e3o do CT-e"
+    },
+    "documentoCte": {
+      "type": "string",
+      "description": "URL do XML do CT-e"
+    },
+    "documentoTem": {
+      "type": "string",
+      "description": "URL do TEM"
+    },
+    "documentoComprovanteDescarga": {
+      "type": "string",
+      "description": "URL do comprovante de descarga"
+    },
+    "documentoCanhoto": {
+      "type": "string",
+      "description": "URL do canhoto assinado"
+    },
+    "cteConfirmadoCliente": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se o cliente confirmou o CT-e"
+    },
+    "codigoCIOT": {
+      "type": "string",
+      "description": "C\u00f3digo do CIOT (para aut\u00f4nomos)"
+    },
+    "ciotRegistrado": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se o CIOT foi registrado"
+    },
+    "dataHoraCIOTRegistrado": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora do registro do CIOT"
+    },
+    "documentoCiot": {
+      "type": "string",
+      "description": "URL do documento CIOT"
+    },
+    "documentoCiotXml": {
+      "type": "string",
+      "description": "URL do XML do CIOT"
+    },
+    "valorCiot": {
+      "type": "number",
+      "description": "Valor informado no CIOT"
+    },
+    "codigoMDFe": {
+      "type": "string",
+      "description": "C\u00f3digo do MDF-e"
+    },
+    "mdfeRegistrado": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se o MDF-e foi registrado"
+    },
+    "dataHoraMDFeRegistrado": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora do registro do MDF-e"
+    },
+    "documentoMdfe": {
+      "type": "string",
+      "description": "URL do documento MDF-e"
+    },
+    "documentoMdfeXml": {
+      "type": "string",
+      "description": "URL do XML do MDF-e"
+    },
+    "ehGranelNcm": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se \u00e9 gr\u00e3o a granel baseado no NCM"
+    },
+    "pesoDescarga": {
+      "type": "number",
+      "description": "Peso informado na descarga (para granel)"
+    },
+    "primeiraVisualizacao": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora da primeira visualiza\u00e7\u00e3o pelo cliente"
+    },
+    "avaliada": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se a cota\u00e7\u00e3o j\u00e1 foi avaliada pelo cliente"
+    },
+    "valorOriginalCotacao": {
+      "type": "number",
+      "description": "Valor original da cota\u00e7\u00e3o aceita"
+    },
+    "taxaPlataforma": {
+      "type": "number",
+      "default": 0,
+      "description": "Taxa de 5% da plataforma"
+    },
+    "statusPagamento": {
+      "type": "string",
+      "enum": [
+        "nao_requerido",
+        "pendente",
+        "processando",
+        "pago",
+        "falhou"
+      ],
+      "default": "nao_requerido",
+      "description": "Status do pagamento (CIF paga antecipado)"
+    },
+    "valorPago": {
+      "type": "number",
+      "description": "Valor pago pelo cliente"
+    },
+    "dataPagamento": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora do pagamento"
+    },
+    "metodoPagamento": {
+      "type": "string",
+      "enum": [
+        "creditos",
+        "cartao_credito",
+        "cartao_debito",
+        "pix",
+        "boleto",
+        "infinity_pay"
+      ],
+      "description": "M\u00e9todo utilizado para pagamento"
+    },
+    "pagamentoId": {
+      "type": "string",
+      "description": "ID do registro de pagamento"
+    },
+    "documentosEntrega": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "URLs dos documentos de entrega"
+    },
+    "valorFinalTransportadora": {
+      "type": "number",
+      "description": "Valor final informado pela transportadora (CT-e ou CIOT)"
+    },
+    "valorFinalCliente": {
+      "type": "number",
+      "description": "Valor final confirmado pelo cliente"
+    },
+    "entregaProdutosMaisTransportadora": {
+      "type": "boolean",
+      "default": false
+    },
+    "entregaProdutosMaisCliente": {
+      "type": "boolean",
+      "default": false
+    },
+    "observacoesTransportadora": {
+      "type": "string"
+    },
+    "observacoesCliente": {
+      "type": "string"
+    },
+    "dataHoraComprovanteEnviado": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "dataHoraFinalizacao": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "avaliacaoTransportadoraId": {
+      "type": "string"
+    },
+    "avaliacaoClienteId": {
+      "type": "string"
+    },
+    "contestacao": {
+      "type": "object",
+      "properties": {
+        "contestada": {
+          "type": "boolean",
+          "default": false
+        },
+        "motivo": {
+          "type": "string"
+        },
+        "dataHora": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "valorFinalApurado": {
+      "type": "number",
+      "description": "Valor final apurado (maior entre cota\u00e7\u00e3o e CT-e/CIOT)"
+    },
+    "valorComissao": {
+      "type": "number",
+      "description": "Valor de 5% a ser cobrado"
+    },
+    "diferencaValor": {
+      "type": "number"
+    },
+    "boletoGerado": {
+      "type": "boolean",
+      "default": false
+    },
+    "observacoes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "clienteId",
+    "produtoId",
+    "destinatarioId",
+    "valorNotaFiscal",
+    "quantidadeVolumes",
+    "pesoTotal",
+    "tipoFrete",
+    "tempoCotacaoMinutos",
+    "dataHoraColeta"
+  ]
+}

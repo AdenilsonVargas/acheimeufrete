@@ -1,0 +1,73 @@
+{
+  "name": "EnderecoColeta",
+  "type": "object",
+  "properties": {
+    "clienteId": {
+      "type": "string",
+      "description": "ID do cliente"
+    },
+    "apelido": {
+      "type": "string",
+      "description": "Nome/apelido do endere\u00e7o"
+    },
+    "cep": {
+      "type": "string"
+    },
+    "logradouro": {
+      "type": "string"
+    },
+    "numero": {
+      "type": "string"
+    },
+    "complemento": {
+      "type": "string"
+    },
+    "bairro": {
+      "type": "string"
+    },
+    "cidade": {
+      "type": "string"
+    },
+    "estado": {
+      "type": "string"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Latitude do endere\u00e7o"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Longitude do endere\u00e7o"
+    },
+    "principal": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se \u00e9 o endere\u00e7o principal/padr\u00e3o"
+    },
+    "termoAceito": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se o termo de responsabilidade foi aceito"
+    },
+    "dataTermoAceito": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora do aceite do termo"
+    },
+    "ativo": {
+      "type": "boolean",
+      "default": true,
+      "description": "Se o endere\u00e7o est\u00e1 ativo (n\u00e3o pode ser deletado)"
+    }
+  },
+  "required": [
+    "clienteId",
+    "apelido",
+    "cep",
+    "logradouro",
+    "numero",
+    "bairro",
+    "cidade",
+    "estado"
+  ]
+}

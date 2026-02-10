@@ -1,0 +1,62 @@
+{
+  "name": "PacotePremium",
+  "type": "object",
+  "properties": {
+    "tipo": {
+      "type": "string",
+      "enum": [
+        "cliente",
+        "transportadora"
+      ],
+      "description": "Tipo de usu\u00e1rio do pacote"
+    },
+    "nome": {
+      "type": "string",
+      "description": "Nome do pacote"
+    },
+    "nivel": {
+      "type": "integer",
+      "description": "N\u00edvel do pacote (1-5)"
+    },
+    "valor": {
+      "type": "number",
+      "description": "Valor do pacote"
+    },
+    "comissao": {
+      "type": "number",
+      "description": "Comiss\u00e3o (apenas transportadora)"
+    },
+    "beneficioDesconto": {
+      "type": "number",
+      "description": "Valor em descontos (apenas cliente)"
+    },
+    "cancelamentosMes": {
+      "type": "integer",
+      "description": "Cancelamentos permitidos por m\u00eas"
+    },
+    "entregasSemMulta": {
+      "type": "integer",
+      "description": "Entregas sem multa por atraso (apenas transportadora)"
+    },
+    "diasDestaque": {
+      "type": "integer",
+      "description": "Dias de destaque no topo (apenas transportadora)"
+    },
+    "cashbackPorcentagem": {
+      "type": "number",
+      "default": 10,
+      "description": "Porcentagem de cashback (10% para premium)"
+    },
+    "ativo": {
+      "type": "boolean",
+      "default": true,
+      "description": "Se o pacote est\u00e1 ativo para venda"
+    }
+  },
+  "required": [
+    "tipo",
+    "nome",
+    "nivel",
+    "valor"
+  ]
+}

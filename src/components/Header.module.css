@@ -1,0 +1,290 @@
+/* ============================================
+   ESTILOS PROFISSIONAIS E DINÂMICOS DO HEADER
+   ============================================ */
+
+/* Container da Logo com efeitos */
+.logoContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+}
+
+.logoContainer:hover {
+  gap: 1.25rem;
+}
+
+/* Glass Container da Logo */
+.glassContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.4) 100%);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(100, 116, 139, 0.4);
+  border-radius: 0.875rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.logoContainer:hover .glassContainer {
+  transform: scale(1.1) translateY(-2px);
+  border-color: rgba(251, 146, 60, 0.4);
+  box-shadow: 
+    0 15px 50px rgba(255, 107, 53, 0.2),
+    0 0 30px rgba(255, 107, 53, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.6) 100%);
+}
+
+/* Inner Glow Effect */
+.innerGlow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.15) 0%, transparent 100%);
+  border-radius: 0.75rem;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.logoContainer:hover .innerGlow {
+  opacity: 1;
+}
+
+/* Logo Image */
+.logoImage {
+  position: relative;
+  width: 2.25rem;
+  height: 2.25rem;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+  transition: all 0.4s ease;
+  z-index: 1;
+}
+
+.logoContainer:hover .logoImage {
+  filter: drop-shadow(0 8px 20px rgba(255, 107, 53, 0.3));
+  transform: scale(1.05);
+}
+
+/* Brilho Animado */
+.shineOverlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.875rem;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.2) 50%, 
+    transparent 100%
+  );
+  opacity: 0;
+}
+
+.logoContainer:hover .shine {
+  animation: shine 0.6s ease-in-out forwards;
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+/* Textos da Logo */
+.logoText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.logoTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: all 0.4s ease;
+  line-height: 1;
+}
+
+.logoContainer:hover .logoTitle {
+  background: linear-gradient(135deg, #fbbf24 0%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0em;
+}
+
+.logoSubtitle {
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: rgba(251, 146, 60, 0.7);
+  letter-spacing: 0.03em;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  margin-top: 0.125rem;
+}
+
+.logoContainer:hover .logoSubtitle {
+  color: rgba(251, 146, 60, 1);
+  letter-spacing: 0.08em;
+}
+
+/* Menu Links com Underline Animado */
+.menuLink {
+  position: relative;
+  color: #cbd5e1;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  font-weight: 500;
+  padding-bottom: 0.25rem;
+}
+
+.menuLink:hover {
+  color: #fb923c;
+}
+
+.menuLink::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ff6b35, #004e89);
+  transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.menuLink:hover::after {
+  width: 100%;
+}
+
+/* Responsividade para Mobile */
+@media (max-width: 768px) {
+  .logoContainer {
+    gap: 0.875rem;
+  }
+
+  .glassContainer {
+    padding: 0.5rem;
+  }
+
+  .logoImage {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .logoTitle {
+    font-size: 1.25rem;
+  }
+
+  .logoSubtitle {
+    display: none;
+  }
+
+  .logoContainer:hover .glassContainer {
+    transform: scale(1.08) translateY(-1px);
+  }
+}
+
+/* Tablet */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .logoTitle {
+    font-size: 1.375rem;
+  }
+
+  .logoImage {
+    width: 2.125rem;
+    height: 2.125rem;
+  }
+
+  .logoSubtitle {
+    font-size: 0.6rem;
+  }
+}
+
+/* Animação de Entrada do Header */
+@keyframes headerSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.headerAnimated {
+  animation: headerSlideIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Efeito de Glow Pulsante */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 
+      0 10px 40px rgba(0, 0, 0, 0.3),
+      inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 10px 40px rgba(0, 0, 0, 0.3),
+      0 0 20px rgba(255, 107, 53, 0.15),
+      inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Animação suave de flutuação */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+.logoContainer:hover .glassContainer {
+  animation: float 2s ease-in-out infinite;
+}
+
+/* Efeito de Border Gradient */
+.borderGradient::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.3), rgba(0, 78, 137, 0.2));
+  border-radius: 0.875rem;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+}
+
+.logoContainer:hover .borderGradient::before {
+  opacity: 1;
+}

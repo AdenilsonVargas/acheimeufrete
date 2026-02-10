@@ -1,0 +1,131 @@
+{
+  "name": "Chat",
+  "type": "object",
+  "properties": {
+    "cotacaoId": {
+      "type": "string",
+      "description": "ID da cota\u00e7\u00e3o"
+    },
+    "clienteId": {
+      "type": "string",
+      "description": "ID do cliente"
+    },
+    "transportadoraId": {
+      "type": "string",
+      "description": "ID da transportadora"
+    },
+    "tipo": {
+      "type": "string",
+      "enum": [
+        "normal",
+        "negociacao_cte"
+      ],
+      "default": "normal",
+      "description": "Tipo do chat"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ativo",
+        "bloqueado",
+        "expirado",
+        "aguardando_cliente",
+        "aguardando_transportadora",
+        "aprovado",
+        "rejeitado_final"
+      ],
+      "default": "ativo",
+      "description": "Status do chat"
+    },
+    "tentativasNegociacao": {
+      "type": "integer",
+      "default": 0,
+      "description": "N\u00famero de tentativas de negocia\u00e7\u00e3o (m\u00e1x 2)"
+    },
+    "valorOriginalCotacao": {
+      "type": "number",
+      "description": "Valor original da cota\u00e7\u00e3o aceita"
+    },
+    "valorAtualProposta": {
+      "type": "number",
+      "description": "Valor atual proposto pela transportadora"
+    },
+    "motivoUltimaRejeicao": {
+      "type": "string",
+      "description": "Motivo da \u00faltima rejei\u00e7\u00e3o pelo cliente"
+    },
+    "dataHoraInicio": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora que o chat foi iniciado"
+    },
+    "dataHoraExpiracao": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora de expira\u00e7\u00e3o"
+    },
+    "dataHoraUltimaMensagem": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora da \u00faltima mensagem enviada"
+    },
+    "lidoPorTransportadora": {
+      "type": "boolean",
+      "default": true,
+      "description": "Se o chat foi lido pela transportadora"
+    },
+    "lidoPorCliente": {
+      "type": "boolean",
+      "default": true,
+      "description": "Se o chat foi lido pelo cliente"
+    },
+    "mensagens": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "remetente": {
+            "type": "string",
+            "enum": [
+              "cliente",
+              "transportadora",
+              "sistema"
+            ]
+          },
+          "mensagem": {
+            "type": "string"
+          },
+          "tipoMensagem": {
+            "type": "string",
+            "enum": [
+              "texto",
+              "proposta_valor",
+              "aprovacao",
+              "rejeicao",
+              "contra_proposta",
+              "devolucao"
+            ]
+          },
+          "valorProposto": {
+            "type": "number"
+          },
+          "motivoRejeicao": {
+            "type": "string"
+          },
+          "dataHora": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "default": []
+    }
+  },
+  "required": [
+    "cotacaoId",
+    "clienteId",
+    "transportadoraId",
+    "dataHoraInicio",
+    "dataHoraExpiracao"
+  ]
+}

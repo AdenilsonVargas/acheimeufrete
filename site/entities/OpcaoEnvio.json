@@ -1,0 +1,28 @@
+{
+  "name": "OpcaoEnvio",
+  "type": "object",
+  "properties": {
+    "transportadoraId": {
+      "type": "string",
+      "description": "ID da transportadora"
+    },
+    "nome": {
+      "type": "string",
+      "enum": [
+        "A\u00e9reo",
+        "Mar\u00edtimo",
+        "Terrestre",
+        "Dedicado",
+        "Outro"
+      ],
+      "description": "Tipo de envio"
+    },
+    "descricao": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "transportadoraId",
+    "nome"
+  ]
+}

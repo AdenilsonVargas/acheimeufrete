@@ -1,0 +1,154 @@
+{
+  "agent": {
+    "name": "Achei Meu Frete Development Agent",
+    "version": "1.0.0",
+    "description": "AI Agent for Achei Meu Frete logistics platform development"
+  },
+  
+  "initialization": {
+    "on_start": {
+      "message": "🤖 INICIALIZANDO AGENTE - LEITURA OBRIGATÓRIA DO GUIDEBOOK",
+      "read_order": [
+        "AGENT_OPERATIONAL_GUIDEBOOK.md",
+        "GUIA_BOAS_PRATICAS.md",
+        "POLITICA_AUTENTICACAO.md"
+      ],
+      "required_sections": {
+        "section_1": "FORBIDDEN OPERATIONS (Nunca fazer isso)",
+        "section_2": "MANDATORY PATTERNS (Sempre fazer assim)",
+        "section_3": "ARCHITECTURE GUARANTEES (O que o sistema garante)"
+      }
+    },
+    
+    "before_any_code_change": {
+      "step_1": "Read AGENT_OPERATIONAL_GUIDEBOOK.md sections 1-3",
+      "step_2": "Identify which section of the guidebook applies to this task",
+      "step_3": "Check task against FORBIDDEN OPERATIONS",
+      "step_4": "Plan using MANDATORY PATTERNS",
+      "step_5": "Report findings before implementing",
+      "step_6": "Implement following patterns",
+      "step_7": "Validate with tests"
+    }
+  },
+
+  "critical_rules": {
+    "authentication": {
+      "section": 4,
+      "rules": [
+        "NEVER clear localStorage on error",
+        "NEVER create mock users in useAuthStore",
+        "NEVER store passwords in localStorage",
+        "ALWAYS preserve session on F5 refresh",
+        "ALWAYS use user?.userType (not user?.role)"
+      ]
+    },
+    
+    "components": {
+      "section": 5,
+      "rules": [
+        "NEVER import Header in pages/ (renders ONCE in App.jsx)",
+        "ALWAYS wrap protected pages with DashboardLayout",
+        "ALWAYS start sidebar at top-20 (not top-0)",
+        "NEVER hardcode userType='embarcador'",
+        "ALWAYS add dark: prefix to all color classes"
+      ]
+    },
+    
+    "testing": {
+      "section": 6,
+      "rules": [
+        "ALWAYS run npm run build before committing",
+        "ALWAYS run bash test-security-complete.sh",
+        "ALWAYS run bash test-f5-advanced.sh for auth changes",
+        "ALWAYS verify console has no errors (F12)",
+        "ALWAYS check localStorage has auth_token + user"
+      ]
+    },
+    
+    "security": {
+      "section": 1,
+      "rules": [
+        "Check all 12 FORBIDDEN OPERATIONS listed in Section 1",
+        "Validate user session persists on F5",
+        "Verify userType never switches unless logout+login",
+        "Ensure no hardcoded credentials"
+      ]
+    }
+  },
+
+  "validation": {
+    "pre_commit_checks": [
+      "Verify Header not imported in pages/",
+      "Verify userType not hardcoded",
+      "Verify localStorage.clear() only on logout",
+      "Verify all colors have dark: variant"
+    ],
+    
+    "test_commands": [
+      "npm run build",
+      "bash test-security-complete.sh",
+      "bash test-f5-advanced.sh"
+    ],
+    
+    "validation_script": "bash agent-rules-validator.sh"
+  },
+
+  "documentation": {
+    "master_guidebook": "AGENT_OPERATIONAL_GUIDEBOOK.md",
+    "security_details": "CORRECAO_SESSION_F5_CRITICAL.md",
+    "auth_policy": "POLITICA_AUTENTICACAO.md",
+    "best_practices": "GUIA_BOAS_PRATICAS.md",
+    "validation": "VALIDACAO_FINAL_SISTEMA.md",
+    "header_logic": "HEADER_LOGICA_ATUALIZADA.md"
+  },
+
+  "critical_files": {
+    "authentication": [
+      "src/hooks/useAuthStore.js",
+      "src/api/client.js",
+      "backend/src/controllers/authController.js"
+    ],
+    
+    "components": [
+      "src/App.jsx",
+      "src/components/Header.jsx",
+      "src/components/DashboardLayout.jsx",
+      "src/components/ProtectedRoute.jsx"
+    ],
+    
+    "configuration": [
+      ".agent-config.json",
+      "AGENT_OPERATIONAL_GUIDEBOOK.md",
+      "package.json"
+    ]
+  },
+
+  "enforcement": {
+    "init_script": "bash INIT_AGENT.sh",
+    "validator_script": "bash agent-rules-validator.sh",
+    "pre_commit_hook": ".git/hooks/pre-commit",
+    "npm_scripts": {
+      "agent:init": "Runs INIT_AGENT.sh",
+      "agent:validate": "Runs agent-rules-validator.sh",
+      "agent:check": "Runs all pre-commit validations"
+    }
+  },
+
+  "checklist_before_work": {
+    "self_check": [
+      "✓ Read AGENT_OPERATIONAL_GUIDEBOOK.md sections 1-3",
+      "✓ Understand 12 FORBIDDEN OPERATIONS",
+      "✓ Know MANDATORY PATTERNS by heart",
+      "✓ Can explain 3 Header scenarios",
+      "✓ Know why F5 refresh must keep session",
+      "✓ Know why localStorage.clear() is forbidden",
+      "✓ Know why Header renders ONCE only",
+      "✓ Know why sidebar starts at top-20",
+      "✓ Will run npm run build before committing",
+      "✓ Will run test scripts before committing"
+    ]
+  },
+
+  "last_updated": "2025-02-09",
+  "status": "ACTIVE - All agents must follow this configuration"
+}

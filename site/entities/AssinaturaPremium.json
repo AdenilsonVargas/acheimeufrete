@@ -1,0 +1,86 @@
+{
+  "name": "AssinaturaPremium",
+  "type": "object",
+  "properties": {
+    "userId": {
+      "type": "string",
+      "description": "ID do usu\u00e1rio (perfilAtivoId)"
+    },
+    "tipo": {
+      "type": "string",
+      "enum": [
+        "cliente",
+        "transportadora"
+      ],
+      "description": "Tipo de usu\u00e1rio"
+    },
+    "pacoteId": {
+      "type": "string",
+      "description": "ID do pacote premium adquirido"
+    },
+    "pacoteNome": {
+      "type": "string",
+      "description": "Nome do pacote"
+    },
+    "pacoteNivel": {
+      "type": "integer",
+      "description": "N\u00edvel do pacote"
+    },
+    "valorPago": {
+      "type": "number",
+      "description": "Valor pago pelo pacote"
+    },
+    "valorDescontoCashback": {
+      "type": "number",
+      "default": 0,
+      "description": "Valor descontado com cashback"
+    },
+    "dataInicio": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data de in\u00edcio da assinatura"
+    },
+    "dataFim": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data de fim da assinatura"
+    },
+    "ativa": {
+      "type": "boolean",
+      "default": true,
+      "description": "Se a assinatura est\u00e1 ativa"
+    },
+    "cancelamentosMesAtual": {
+      "type": "integer",
+      "default": 0,
+      "description": "Cancelamentos utilizados no m\u00eas atual"
+    },
+    "entregasSemMultaMesAtual": {
+      "type": "integer",
+      "default": 0,
+      "description": "Entregas sem multa utilizadas no m\u00eas (transportadora)"
+    },
+    "descontosUtilizados": {
+      "type": "number",
+      "default": 0,
+      "description": "Valor de descontos j\u00e1 utilizados (cliente)"
+    },
+    "mesReferencia": {
+      "type": "string",
+      "description": "M\u00eas de refer\u00eancia para contadores (YYYY-MM)"
+    },
+    "diasDestaqueRestantes": {
+      "type": "integer",
+      "default": 0,
+      "description": "Dias de destaque restantes (transportadora)"
+    }
+  },
+  "required": [
+    "userId",
+    "tipo",
+    "pacoteId",
+    "valorPago",
+    "dataInicio",
+    "dataFim"
+  ]
+}

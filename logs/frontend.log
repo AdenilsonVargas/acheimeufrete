@@ -1,0 +1,11 @@
+
+> acheimeufrete@1.0.0 dev
+> vite
+
+✅ Configurações carregadas: Frontend=3000, Backend=5000
+
+  VITE v5.4.21  ready in 237 ms
+
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: http://10.0.11.89:3000/
+  ➜  Network: http://172.18.0.1:3000/

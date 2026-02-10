@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Logo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            font-family: Arial, sans-serif;
+            color: white;
+            height: 200vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+        }
+        .logo-section {
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            position: relative;
+        }
+        .logo-section h3 {
+            margin-top: 0;
+            color: #f97316;
+        }
+        .logo-test {
+            width: 300px;
+            height: 300px;
+            border: 3px solid #f97316;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.5);
+            margin: 20px 0;
+        }
+        .logo-test img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            opacity: 0.8;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .status.ok {
+            background: #22c55e;
+            color: black;
+        }
+        .status.error {
+            background: #ef4444;
+            color: white;
+        }
+        .console-log {
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste de Carregamento de Logo</h1>
+        <p>Esta página testa se a logo pode ser carregada corretamente pelo servidor Vite.</p>
+
+        <div class="logo-section">
+            <h3>Teste 1: LogoModerno.png (sem espaço)</h3>
+            <div class="logo-test">
+                <img 
+                    id="logo1" 
+                    src="/images/LogoModerno.png" 
+                    alt="Logo Moderno"
+                    onload="handleLoad('logo1')"
+                    onerror="handleError('logo1')"
+                />
+            </div>
+            <div id="status1" class="status error">⏳ Carregando...</div>
+        </div>
+
+        <div class="logo-section">
+            <h3>Teste 2: Logo Moderno.png (com espaço - URL encoded)</h3>
+            <div class="logo-test">
+                <img 
+                    id="logo2" 
+                    src="/images/Logo%20Moderno.png" 
+                    alt="Logo Moderno com espaço"
+                    onload="handleLoad('logo2')"
+                    onerror="handleError('logo2')"
+                />
+            </div>
+            <div id="status2" class="status error">⏳ Carregando...</div>
+        </div>
+
+        <div class="logo-section">
+            <h3>📊 Console do Navegador</h3>
+            <div class="console-log" id="console-log"></div>
+        </div>
+
+        <div class="container" style="background: linear-gradient(to right, #0f172a, #1e1b4b); position: fixed; bottom: 20px; right: 20px; width: 300px;">
+            <h4>📍 Informações do Servidor</h4>
+            <p id="info"></p>
+        </div>
+    </div>
+
+    <script>
+        const consoleLog = document.getElementById('console-log');
+
+        function log(type, message) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const timestamp = new Date().toLocaleTimeString();
+            entry.innerHTML = `[${timestamp}] <strong>[${type.toUpperCase()}]</strong> ${message}`;
+            consoleLog.appendChild(entry);
+            consoleLog.scrollTop = consoleLog.scrollHeight;
+            console.log(`[${type}] ${message}`);
+        }
+
+        function handleLoad(id) {
+            log('OK', `✓ Imagem ${id} carregada com sucesso!`);
+            document.getElementById(`status${id.slice(-1)}`).innerHTML = 
+                '<span class="status ok">✓ Carregada com sucesso!</span>';
+            document.getElementById(`status${id.slice(-1)}`).className = 'status ok';
+        }
+
+        function handleError(id) {
+            log('ERROR', `✗ Falha ao carregar imagem ${id}`);
+            document.getElementById(`status${id.slice(-1)}`).innerHTML = 
+                '<span class="status error">✗ Erro ao carregar</span>';
+            document.getElementById(`status${id.slice(-1)}`).className = 'status error';
+        }
+
+        // Log inicial
+        log('info', `Página carregada em ${new Date().toLocaleString()}`);
+        log('info', `URL base: ${window.location.origin}`);
+        log('info', `User Agent: ${navigator.userAgent.substring(0, 50)}...`);
+        log('info', 'Iniciando testes de carregamento de imagens...');
+
+        // Verificar se as imagens já estão carregadas
+        setTimeout(() => {
+            const img1 = document.getElementById('logo1');
+            const img2 = document.getElementById('logo2');
+            if (img1.complete) {
+                if (img1.naturalHeight === 0) {
+                    handleError('logo1');
+                } else {
+                    handleLoad('logo1');
+                }
+            }
+            if (img2.complete) {
+                if (img2.naturalHeight === 0) {
+                    handleError('logo2');
+                } else {
+                    handleLoad('logo2');
+                }
+            }
+        }, 1000);
+
+        document.getElementById('info').innerHTML = `
+            <strong>URL Servidor:</strong> ${window.location.origin}<br>
+            <strong>Caminho Imagens:</strong> /images/<br>
+            <strong>Porta:</strong> ${window.location.port || 'padrão'}<br>
+        `;
+    </script>
+</body>
+</html>

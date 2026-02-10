@@ -1,0 +1,57 @@
+{
+  "name": "CotacaoFavorita",
+  "type": "object",
+  "properties": {
+    "clienteId": {
+      "type": "string",
+      "description": "ID do cliente"
+    },
+    "nome": {
+      "type": "string",
+      "description": "Nome obrigat\u00f3rio da cota\u00e7\u00e3o salva"
+    },
+    "isFavorita": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se est\u00e1 marcada como favorita"
+    },
+    "dadosCotacao": {
+      "type": "object",
+      "description": "Dados completos da cota\u00e7\u00e3o para reaproveitamento"
+    },
+    "produtosIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "IDs dos produtos selecionados"
+    },
+    "destinatarioId": {
+      "type": "string",
+      "description": "ID do destinat\u00e1rio"
+    },
+    "enderecoColetaId": {
+      "type": "string",
+      "description": "ID do endere\u00e7o de coleta"
+    },
+    "tipoFrete": {
+      "type": "string",
+      "enum": [
+        "CIF",
+        "FOB"
+      ]
+    },
+    "ehColetaReversa": {
+      "type": "boolean",
+      "default": false
+    },
+    "servicosAdicionais": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "clienteId",
+    "nome"
+  ]
+}

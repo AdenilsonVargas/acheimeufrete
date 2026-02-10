@@ -1,0 +1,502 @@
+{
+  "name": "PerfilTransportadora",
+  "type": "object",
+  "properties": {
+    "userIdGoogle": {
+      "type": "string",
+      "description": "ID do usu\u00e1rio Google da base44"
+    },
+    "emailAcesso": {
+      "type": "string",
+      "description": "Email usado para login como transportadora"
+    },
+    "tipoTransportador": {
+      "type": "string",
+      "enum": [
+        "pj",
+        "autonomo"
+      ],
+      "default": "pj",
+      "description": "Se \u00e9 Pessoa Jur\u00eddica (PJ) ou Aut\u00f4nomo"
+    },
+    "tipoRegistro": {
+      "type": "string",
+      "enum": [
+        "PF",
+        "MEI",
+        "PJ"
+      ],
+      "description": "Tipo de registro (para aut\u00f4nomos: PF, MEI ou PJ individual)"
+    },
+    "razaoSocial": {
+      "type": "string",
+      "description": "Raz\u00e3o social (PJ) ou Nome completo (Aut\u00f4nomo)"
+    },
+    "nomeFantasia": {
+      "type": "string",
+      "description": "Nome fantasia"
+    },
+    "cnpj": {
+      "type": "string",
+      "description": "CNPJ (obrigat\u00f3rio para PJ, opcional para MEI/aut\u00f4nomo)"
+    },
+    "cpf": {
+      "type": "string",
+      "description": "CPF (obrigat\u00f3rio para aut\u00f4nomos)"
+    },
+    "rg": {
+      "type": "string",
+      "description": "RG/Documento (aut\u00f4nomos)"
+    },
+    "dataNascimento": {
+      "type": "string",
+      "format": "date",
+      "description": "Data de nascimento (aut\u00f4nomos)"
+    },
+    "inscricaoEstadual": {
+      "type": "string",
+      "description": "Inscri\u00e7\u00e3o Estadual (PJ)"
+    },
+    "inscricaoMunicipal": {
+      "type": "string",
+      "description": "Inscri\u00e7\u00e3o Municipal (PJ)"
+    },
+    "regimeTributario": {
+      "type": "string",
+      "enum": [
+        "Simples",
+        "Presumido",
+        "Real"
+      ],
+      "description": "Regime tribut\u00e1rio (PJ)"
+    },
+    "cnae": {
+      "type": "string",
+      "description": "C\u00f3digo CNAE"
+    },
+    "tipoTransporte": {
+      "type": "string",
+      "enum": [
+        "transportadora",
+        "moto",
+        "carro",
+        "onibus"
+      ],
+      "default": "transportadora",
+      "description": "Tipo de transporte oferecido"
+    },
+    "telefoneComercial": {
+      "type": "string"
+    },
+    "telefonePessoal": {
+      "type": "string"
+    },
+    "endereco": {
+      "type": "object",
+      "properties": {
+        "cep": {
+          "type": "string"
+        },
+        "logradouro": {
+          "type": "string"
+        },
+        "numero": {
+          "type": "string"
+        },
+        "complemento": {
+          "type": "string"
+        },
+        "bairro": {
+          "type": "string"
+        },
+        "cidade": {
+          "type": "string"
+        },
+        "estado": {
+          "type": "string"
+        }
+      }
+    },
+    "cnhNumero": {
+      "type": "string",
+      "description": "N\u00famero da CNH (aut\u00f4nomos)"
+    },
+    "cnhCategoria": {
+      "type": "string",
+      "description": "Categoria da CNH (aut\u00f4nomos)"
+    },
+    "cnhValidade": {
+      "type": "string",
+      "format": "date",
+      "description": "Validade da CNH (aut\u00f4nomos)"
+    },
+    "anexoCnh": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs dos documentos da CNH"
+    },
+    "veiculoPlaca": {
+      "type": "string",
+      "description": "Placa do ve\u00edculo (aut\u00f4nomos)"
+    },
+    "veiculoRenavam": {
+      "type": "string",
+      "description": "RENAVAM do ve\u00edculo (aut\u00f4nomos)"
+    },
+    "veiculoTipo": {
+      "type": "string",
+      "enum": [
+        "caminh\u00e3o",
+        "caminhonete",
+        "vuc",
+        "bitrem",
+        "carreta",
+        "outro"
+      ],
+      "description": "Tipo do ve\u00edculo (aut\u00f4nomos)"
+    },
+    "veiculoCapacidade": {
+      "type": "string",
+      "description": "Capacidade do ve\u00edculo (aut\u00f4nomos)"
+    },
+    "anexoCrlv": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs dos documentos CRLV"
+    },
+    "rntrcNumero": {
+      "type": "string",
+      "description": "N\u00famero do RNTRC/ANTT"
+    },
+    "anexoRntrc": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs dos comprovantes RNTRC"
+    },
+    "tacNumero": {
+      "type": "string",
+      "description": "N\u00famero do TAC/cooperativa (aut\u00f4nomos)"
+    },
+    "anexoTac": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs dos comprovantes TAC"
+    },
+    "certificadoDigitalPossui": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se possui certificado digital"
+    },
+    "certificadoTipo": {
+      "type": "string",
+      "enum": [
+        "A1",
+        "A3",
+        "sem"
+      ],
+      "description": "Tipo do certificado digital"
+    },
+    "anexoCertificado": {
+      "type": "string",
+      "description": "URL do certificado digital"
+    },
+    "responsavelNome": {
+      "type": "string",
+      "description": "Nome do respons\u00e1vel legal (PJ)"
+    },
+    "responsavelCpf": {
+      "type": "string",
+      "description": "CPF do respons\u00e1vel legal (PJ)"
+    },
+    "responsavelRg": {
+      "type": "string",
+      "description": "RG do respons\u00e1vel legal (PJ)"
+    },
+    "contatoFinanceiro": {
+      "type": "object",
+      "properties": {
+        "nome": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "telefone": {
+          "type": "string"
+        }
+      },
+      "description": "Contato financeiro (PJ)"
+    },
+    "frotaQuantidade": {
+      "type": "integer",
+      "description": "Quantidade de ve\u00edculos na frota (PJ)"
+    },
+    "frotaTipos": {
+      "type": "string",
+      "description": "Tipos de ve\u00edculos na frota (PJ)"
+    },
+    "veiculos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "placa": {
+            "type": "string"
+          },
+          "renavam": {
+            "type": "string"
+          },
+          "capacidadeTon": {
+            "type": "number"
+          },
+          "tipo": {
+            "type": "string"
+          },
+          "anexos": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "description": "Lista de ve\u00edculos (PJ)"
+    },
+    "bancoTitular": {
+      "type": "string",
+      "description": "Titular da conta banc\u00e1ria"
+    },
+    "bancoAgencia": {
+      "type": "string",
+      "description": "Ag\u00eancia banc\u00e1ria"
+    },
+    "bancoConta": {
+      "type": "string",
+      "description": "N\u00famero da conta"
+    },
+    "pixChave": {
+      "type": "string",
+      "description": "Chave PIX"
+    },
+    "aceitaSeguro": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se aceita contratar seguro via plataforma (aut\u00f4nomos)"
+    },
+    "anexoSeguro": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs de ap\u00f3lices/contratos de seguro"
+    },
+    "seguroRc": {
+      "type": "string",
+      "description": "URL da ap\u00f3lice de RC (PJ)"
+    },
+    "seguroPolitica": {
+      "type": "string",
+      "description": "Pol\u00edtica de seguro para cargas (PJ)"
+    },
+    "contabilResponsavel": {
+      "type": "string",
+      "description": "Nome do respons\u00e1vel fiscal/cont\u00e1bil (PJ)"
+    },
+    "contabilEmail": {
+      "type": "string",
+      "description": "Email do cont\u00e1bil (PJ)"
+    },
+    "condicoesComerciais": {
+      "type": "object",
+      "properties": {
+        "prazoPagamento": {
+          "type": "string"
+        },
+        "percentualComissao": {
+          "type": "number",
+          "default": 5
+        },
+        "aceitaAntecipacao": {
+          "type": "boolean"
+        }
+      },
+      "description": "Condi\u00e7\u00f5es comerciais (PJ)"
+    },
+    "docsFiscais": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs de documentos fiscais"
+    },
+    "logoUrl": {
+      "type": "string"
+    },
+    "documentoCnpjScan": {
+      "type": "string",
+      "description": "URL do documento CNPJ (mantido para compatibilidade)"
+    },
+    "documentoAlvara": {
+      "type": "string",
+      "description": "URL do alvar\u00e1 (mantido para compatibilidade)"
+    },
+    "documentoComprovanteEndereco": {
+      "type": "string",
+      "description": "URL do comprovante de endere\u00e7o"
+    },
+    "servicosOferecidos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Servi\u00e7os oferecidos"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected",
+        "blocked"
+      ],
+      "default": "pending"
+    },
+    "statusVerificacao": {
+      "type": "string",
+      "enum": [
+        "pendente",
+        "validado",
+        "rejeitado"
+      ],
+      "default": "pendente",
+      "description": "Status da verifica\u00e7\u00e3o dos documentos"
+    },
+    "verificacaoData": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data da verifica\u00e7\u00e3o/validade"
+    },
+    "validadeDocumentos": {
+      "type": "string",
+      "format": "date",
+      "description": "Data de validade dos documentos"
+    },
+    "motivoRejeicao": {
+      "type": "string",
+      "description": "Motivo da rejei\u00e7\u00e3o do cadastro"
+    },
+    "perfilCompleto": {
+      "type": "boolean",
+      "default": false
+    },
+    "isPremium": {
+      "type": "boolean",
+      "default": false
+    },
+    "avaliacaoMedia": {
+      "type": "number",
+      "default": 0
+    },
+    "totalAvaliacoes": {
+      "type": "integer",
+      "default": 0
+    },
+    "totalEntregas": {
+      "type": "integer",
+      "default": 0
+    },
+    "entregasAtrasoMes": {
+      "type": "integer",
+      "default": 0
+    },
+    "entregasAtrasoAno": {
+      "type": "integer",
+      "default": 0
+    },
+    "mesReferenciaAtraso": {
+      "type": "string"
+    },
+    "anoReferenciaAtraso": {
+      "type": "string"
+    },
+    "bloqueadaCotacoes": {
+      "type": "boolean",
+      "default": false
+    },
+    "motivoBloqueio": {
+      "type": "string"
+    },
+    "multaPendente": {
+      "type": "number",
+      "default": 0
+    },
+    "saldoCarteira": {
+      "type": "number",
+      "default": 0
+    },
+    "saldoCreditosPedagio": {
+      "type": "number",
+      "default": 0
+    },
+    "saldoDescontoPremium": {
+      "type": "number",
+      "default": 0
+    },
+    "historicoCarteira": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": []
+    },
+    "historicoValoresAMais": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": []
+    },
+    "historicoValoresAMenos": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": []
+    },
+    "codigoDiario": {
+      "type": "string"
+    },
+    "dataCodigoDiario": {
+      "type": "string",
+      "format": "date"
+    },
+    "observacoes": {
+      "type": "string",
+      "description": "Observa\u00e7\u00f5es internas"
+    },
+    "alteracoesEmAnalise": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se h\u00e1 altera\u00e7\u00f5es que afetam emiss\u00f5es aguardando aprova\u00e7\u00e3o"
+    },
+    "alteracoesPendentes": {
+      "type": "object",
+      "description": "Dados das altera\u00e7\u00f5es pendentes de aprova\u00e7\u00e3o"
+    }
+  },
+  "required": [
+    "userIdGoogle",
+    "emailAcesso",
+    "razaoSocial",
+    "tipoTransportador"
+  ]
+}

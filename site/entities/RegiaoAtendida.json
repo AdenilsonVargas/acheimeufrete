@@ -1,0 +1,28 @@
+{
+  "name": "RegiaoAtendida",
+  "type": "object",
+  "properties": {
+    "transportadoraId": {
+      "type": "string",
+      "description": "ID da transportadora"
+    },
+    "cepInicio": {
+      "type": "string",
+      "description": "CEP inicial da faixa"
+    },
+    "cepFim": {
+      "type": "string",
+      "description": "CEP final da faixa"
+    },
+    "estados": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Lista de estados atendidos"
+    }
+  },
+  "required": [
+    "transportadoraId"
+  ]
+}

@@ -1,0 +1,424 @@
+╔════════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║     ✅ FASE 7 COMPLETA - TRANSPORTADOR AUTÔNOMO PRONTO PARA USO   ║
+║                                                                    ║
+║              [█████████████████████████░░░░░░░░░░] 80%            ║
+║                                                                    ║
+╚════════════════════════════════════════════════════════════════════╝
+
+
+🎯 O QUE FOI IMPLEMENTADO NA FASE 7
+═════════════════════════════════════════════════════════════════════
+
+✅ TransportadorAutonomoForm.jsx (600 linhas)
+   ├─ 8-9 passos inteligentes (condicional)
+   ├─ Decisão CIOT (sim/não) com branching
+   ├─ CNH obrigatória com validação de vencimento
+   ├─ Endereço residencial com CEP automático
+   ├─ 7 componentes base reutilizados
+   ├─ Validação em tempo real
+   └─ Preparação FormData para API
+
+✅ Página de registro (transportador-autonomo.jsx)
+   ├─ Rota: http://localhost:3000/registro/transportador-autonomo
+   ├─ Layout responsivo
+   ├─ Integração com formulário
+   └─ Tratamento de erros/sucesso
+
+✅ Documentação completa (FASE_7_TRANSPORTADOR_AUTONOMO_COMPLETA.md)
+   ├─ Arquitetura e fluxo
+   ├─ Lógica de branching CIOT
+   ├─ Dados coletados por passo
+   ├─ Validações implementadas
+   ├─ Guia de uso passo a passo
+   └─ Comparação com PJ
+
+
+🚗 ESPECIFICAÇÕES DO FORMULÁRIO
+═════════════════════════════════════════════════════════════════════
+
+PASSOS:
+┌──────────────────────────────────────────────────────────────────┐
+│ Step 0: Dados Pessoais                                           │
+│ ├─ Nome, Sobrenome, CPF, RG                                      │
+│ └─ CNH com data de vencimento (obrigatória)                       │
+├──────────────────────────────────────────────────────────────────┤
+│ Step 1: Endereço Residencial                                     │
+│ ├─ CEP com busca automática ViaCEP                               │
+│ ├─ Logradouro, Número, Complemento                               │
+│ ├─ Bairro, Cidade, Estados (27)                                  │
+│ └─ Validação progressiva                                         │
+├──────────────────────────────────────────────────────────────────┤
+│ Step 2: Contato                                                  │
+│ ├─ Email + Confirmação (bloqueio copiar/colar)                   │
+│ ├─ Telefone (xx) xxxxx-xxxx DDD 11-99                            │
+│ └─ Validação match + formato                                     │
+├──────────────────────────────────────────────────────────────────┤
+│ Step 3: Segurança                                                │
+│ ├─ Senha + Confirmação (bloqueio copy/paste)                     │
+│ ├─ Indicador de força (5 critérios)                              │
+│ └─ Validação match                                               │
+├──────────────────────────────────────────────────────────────────┤
+│ Step 4: 🔀 DECISÃO CIOT 🔀 (BRANCHING POINT)                     │
+│ ├─ Botão: "Sim, eu emito CIOT"                                   │
+│ └─ Botão: "Não, não emito CIOT"                                  │
+├──────────────────────────────────────────────────────────────────┤
+│ Step 5: Dados CIOT (⚡ CONDICIONAL - SE "SIM" PRESSIONADO)       │
+│ ├─ Número CIOT (15 dígitos)                                      │
+│ └─ Data de Vencimento                                            │
+├──────────────────────────────────────────────────────────────────┤
+│ Step 6 ou 5: Veículo (⚡ NÚMERO MUDA CONFORME CIOT)              │
+│ ├─ Tipo: Moto/Triciclo/Caminhão/Van/Utilitário                  │
+│ ├─ Placa (ABC1234)                                               │
+│ ├─ RENAVAM (11 dígitos)                                          │
+│ └─ CRLV com validação de vencimento                              │
+├──────────────────────────────────────────────────────────────────┤
+│ Step 7 ou 6: Documentos (⚡ NÚMERO MUDA CONFORME CIOT)           │
+│ ├─ CNH (obrigatório)                                             │
+│ ├─ RG (obrigatório)                                              │
+│ ├─ CPF (obrigatório)                                             │
+│ └─ Comprovante de Endereço (obrigatório)                         │
+└──────────────────────────────────────────────────────────────────┘
+
+TOTAL DE PASSOS:
+├─ Se respondeu "SIM" ao CIOT:   8 passos (0-7)
+├─ Se respondeu "NÃO" ao CIOT:   7 passos (0-6, pulando step intermédio)
+└─ FormStepper ajusta dinamicamente
+
+
+🔀 LÓGICA DE BRANCHING (DINÂMICO)
+═════════════════════════════════════════════════════════════════════
+
+                    Step 0: Dados Pessoais (nome, CPF, rg, CNH)
+                              ↓
+                    Step 1: Endereço Residencial
+                              ↓
+                    Step 2: Contato (email, tel)
+                              ↓
+                    Step 3: Segurança (senha)
+                              ↓
+              ┌─────── Step 4: CIOT? ──────┐
+              │                            │
+           🟢 SIM                        🔴 NÃO
+              │                            │
+              ↓                            ↓
+          Step 5:                    Step 5:
+          CIOT DATA                  VEÍCULO
+          (Número,                   (Tipo, Placa,
+          Vencimento)                RENAVAM, CRLV)
+              │                            │
+              ↓                            ↓
+          Step 6:                    Step 6:
+          VEÍCULO                    DOCUMENTOS
+          (Tipo, Placa,
+          RENAVAM, CRLV)
+              │
+              ↓
+          Step 7:
+          DOCUMENTOS
+              │
+              └───────────┬─────────────┘
+                          ↓
+                    ✅ SUBMIT FORM ✅
+                          ↓
+                  Redireciona para login
+
+
+🎨 COMPONENTES REUTILIZADOS
+═════════════════════════════════════════════════════════════════════
+
+De um total de 9 componentes base criados, 7 são utilizados:
+
+├─ ✅ FormStepper.jsx
+│  └─ Exibe progresso 2/8 ou 2/7 dependendo de CIOT
+│
+├─ ✅ PhoneInput.jsx
+│  └─ Step 2: Validação (xx) xxxxx-xxxx com DDD
+│
+├─ ✅ EmailInput.jsx (+ EmailConfirmInput.jsx)
+│  └─ Step 2: Email + bloqueio copiar/colar
+│
+├─ ✅ PasswordInput.jsx (+ PasswordConfirmInput.jsx)
+│  └─ Step 3: Senha com força + bloqueio copy/paste
+│
+├─ ✅ CPFInput.jsx
+│  └─ Step 0: CPF com validação algoritmo
+│
+├─ ✅ DateInput.jsx
+│  └─ Steps 0, 5 (condicional), 6: Vencimentos
+│
+├─ ✅ AddressForm.jsx
+│  └─ Step 1: CEP automático via ViaCEP
+│
+└─ ✅ DocumentUpload.jsx
+   └─ Step 7/6: 4 documentos obrigatórios
+
+
+💾 DADOS COLETADOS
+═════════════════════════════════════════════════════════════════════
+
+form = {
+  // Dados Pessoais (Step 0)
+  nome: "João",
+  sobrenome: "Silva",
+  cpf: "123.456.789-09",
+  rg: "12.345.678-9",
+  cnhNumero: "123456789012345",
+  cnhVencimento: "2026-12-31",
+
+  // Endereço (Step 1)
+  endereco: {
+    cep: "01310-100",
+    logradouro: "Avenida Paulista",
+    numero: "1000",
+    complemento: "Apt 201",
+    bairro: "Bela Vista",
+    cidade: "São Paulo",
+    estado: "SP"
+  },
+
+  // Contato (Step 2)
+  email: "joao@example.com",
+  emailConfirmacao: "joao@example.com",
+  telefone: "(11) 98765-4321",
+
+  // Segurança (Step 3)
+  senha: "Senha@123456",
+  senhaConfirmacao: "Senha@123456",
+
+  // CIOT - CONDICIONAL (Step 5 se SIM)
+  ciotNumero: "000000000000000",
+  ciotVencimento: "2026-12-31",
+
+  // Veículo (Step 6/5)
+  veiculo: {
+    tipo: "Moto",
+    placa: "ABC1234",
+    renavam: "12345678901",
+    crlvVencimento: "2026-12-31"
+  },
+
+  // Documentos (Step 7/6)
+  documentos: [
+    { type: "CNH", file: File },
+    { type: "RG", file: File },
+    { type: "CPF", file: File },
+    { type: "COMPROVANTE_ENDERECO", file: File }
+  ]
+}
+
+
+✓ VALIDAÇÃO POR CAMPOS
+═════════════════════════════════════════════════════════════════════
+
+PASSO 0 - Dados Pessoais:
+├─ ✓ nome: não vazio
+├─ ✓ sobrenome: não vazio
+├─ ✓ cpf: algoritmo de verificação digit
+├─ ✓ rg: não vazio
+├─ ✓ cnhNumero: não vazio
+└─ ✓ cnhVencimento: 🟢 válido, 🟡 próximo (7-30 dias), 🔴 vencido
+
+PASSO 1 - Endereço:
+├─ ✓ cep: buildbox automática (ViaCEP)
+├─ ✓ logradouro: não vazio
+├─ ✓ numero: não vazio
+├─ ✓ bairro: não vazio
+├─ ✓ cidade: não vazio
+└─ ✓ estado: 27 opções selecionáveis
+
+PASSO 2 - Contato:
+├─ ✓ email: validação regex email
+├─ ✓ emailConfirmacao: match com email
+└─ ✓ telefone: formato (xx) xxxxx-xxxx com DDD 11-99
+
+PASSO 3 - Segurança:
+├─ ✓ senha: 5 critérios (8+ chars, 1 maiúscula, 1 número, 1 especial)
+└─ ✓ senhaConfirmacao: match com senha
+
+PASSO 4 - Decisão:
+└─ ✓ ciotDecision: obrigatório escolher (true/false)
+
+PASSO 5 - CIOT (se SIM):
+├─ ✓ ciotNumero: não vazio (15 díg)
+└─ ✓ ciotVencimento: 🟢 válido, 🟡 próximo, 🔴 vencido
+
+PASSO 6/5 - Veículo:
+├─ ✓ tipo: uma das 5 opções
+├─ ✓ placa: não vazio, uppercase
+├─ ✓ renavam: não vazio (11 díg)
+└─ ✓ crlvVencimento: 🟢 válido, 🟡 próximo, 🔴 vencido
+
+PASSO 7/6 - Documentos:
+└─ ✓ 4 arquivos obrigatórios + validação MIME/tamanho
+
+
+🔐 SEGURANÇA IMPLEMENTADA
+═════════════════════════════════════════════════════════════════════
+
+✅ Bloqueio copiar/colar em email de confirmação
+✅ Bloqueio copy/paste em confirmação de senha
+✅ Validação de força de senha obrigatória (5 critérios)
+✅ Validação de vencimento de documentos (CNH, CRLV, CIOT)
+✅ Algoritmo verificador de CPF (rejeita genéricos)
+✅ Validação MIME de arquivo (apenas tipos corretos)
+✅ Limite de tamanho de arquivo (10MB máximo)
+✅ Validação de match entre campos
+✅ CEP lookup validado (não aceita CEP inválido)
+
+
+🧪 COMO TESTAR
+═════════════════════════════════════════════════════════════════════
+
+1. Abrir no navegador:
+   http://localhost:3000/registro/transportador-autonomo
+
+2. Preencher PASSO 0 (Dados Pessoais):
+   └─ Nome: João
+   └─ Sobrenome: Silva  
+   └─ CPF: 123.456.789-09
+   └─ RG: 12.345.678-9
+   └─ CNH: 123456789012345
+   └─ CNH Vencimento: 2026-12-31
+   └─ ✅ Clique "Próximo"
+
+3. Preencher PASSO 1 (Endereço):
+   └─ CEP: 01310-100 (sistema carrega automaticamente)
+   └─ Confirma rua, bairro, cidade
+   └─ Número: 1000
+   └─ Estado: SP
+   └─ ✅ Clique "Próximo"
+
+4. Preencher PASSO 2 (Contato):
+   └─ Email: teste@example.com
+   └─ Email Confirmação: teste@example.com
+   └─ Telefone: (11) 98765-4321
+   └─ ✅ Clique "Próximo"
+
+5. Preencher PASSO 3 (Segurança):
+   └─ Senha: Senha@123456 (força alta)
+   └─ Confirmação: Senha@123456
+   └─ ✅ Clique "Próximo"
+
+6. PASSO 4 - DECISÃO CIOT:
+   ├─ OPÇÃO A: Clique "Sim" → passa para Step 5 CIOT
+   │  └─ CIOT Número: 000000000000000
+   │  └─ CIOT Vencimento: 2026-12-31
+   │  └─ ✅ Próximo → Step 6 Veículo (8 passos total)
+   │
+   └─ OPÇÃO B: Clique "Não" → pula para Step 5 Veículo
+      └─ (Sem step intermediário - 7 passos total)
+
+7. Preencher Veículo (Step 6 ou 5):
+   └─ Tipo: Moto
+   └─ Placa: ABC1234
+   └─ RENAVAM: 12345678901
+   └─ CRLV Vencimento: 2026-12-31
+   └─ ✅ Clique "Próximo"
+
+8. Upload Documentos (Step 7 ou 6):
+   └─ Upload 4 arquivos:
+      ├─ CNH (foto)
+      ├─ RG (foto)
+      ├─ CPF (documento)
+      └─ Comprovante de Endereço (recente)
+   └─ ✅ Clique "Finalizar Cadastro"
+
+9. Resultado:
+   └─ Mensagem de sucesso por 2 segundos
+   └─ Redireciona para /login?registered=true&type=transportador_autonomo
+
+
+📊 ESTATÍSTICAS
+═════════════════════════════════════════════════════════════════════
+
+Arquivo principal: TransportadorAutonomoForm.jsx
+├─ Linhas de código: ~600
+├─ Funções: 8 (getSteps, validateStep, handleNext, handlePrevious, handleCiotDecision, handleSubmit, renderStepContent)
+├─ Estados: 8 (currentStep, showCiotStep, loading, error, form, uploadedFiles, errors)
+├─ Componentes reutilizados: 7
+└─ Passos dinâmicos: 7-8 (condicional)
+
+Página: transportador-autonomo.jsx
+├─ Linhas de código: ~20
+├─ Wrapper simples
+└─ Integra TransportadorAutonomoForm
+
+Documentação: FASE_7_TRANSPORTADOR_AUTONOMO_COMPLETA.md
+├─ Linhas: ~600
+├─ Coberta arquitetura completa
+└─ Inclui guia passo a passo
+
+
+🔗 ROTAS DISPONÍVEIS AGORA
+═════════════════════════════════════════════════════════════════════
+
+✅ /registro/transportador-pj
+   └─ Formulário Transportador PJ (7 passos)
+
+✅ /registro/transportador-autonomo (NOVA)
+   └─ Formulário Transportador Autônomo (7-8 passos condicional)
+
+Próximas a adicionar:
+├─ /registro/embarcador-cpf (Fase 8)
+├─ /registro/embarcador-cnpj (Fase 8)
+└─ /api/auth/register (Fase 9 - backend)
+
+
+💡 DIFERENCIAIS DO AUTÔNOMO
+═════════════════════════════════════════════════════════════════════
+
+vs Transportador PJ:
+├─ ✅ CIOT condicional (sim/não) - PJ não tem
+├─ ✅ Branching dinâmico de passos - PJ linear
+├─ ✅ Endereço residencial - PJ comercial
+├─ ✅ Sem dados empresa - PJ tem CNPJ/IE
+├─ ✅ CNH obrigatória - PJ tem em responsável
+├─ ✅ Menos documentos (4 vs 6) - menos burocracia
+├─ ✅ 1 veículo - PJ suporta múltiplos
+└─ ✅ Mais tipos de veículo - Moto, Van, etc
+
+vs Embarcador (próximo):
+├─ ✅ Transportando (tem veículo) - Embarcador não
+├─ ✅ CIOT para rastreamento - Embarcador sem
+└─ ✅ CNH obrigatória - Embarcador não
+
+
+🎯 PRÓXIMA FASE (8)
+═════════════════════════════════════════════════════════════════════
+
+Embarcador CPF + CNPJ
+
+Arquivos a criar:
+├─ EmbarcadorCPFForm.jsx (~500 linhas)
+│  ├─ 5 passos: Dados, Endereço, Contato, Segurança, Documentos
+│  └─ Reutiliza 5/7 componentes base
+│
+└─ EmbarcadorCNPJForm.jsx (~550 linhas)
+   ├─ 6 passos: Empresa, Endereço, Contato, Segurança, Docs
+   └─ Reutiliza 6/7 componentes base
+
+Rotas:
+├─ /registro/embarcador-cpf
+└─ /registro/embarcador-cnpj
+
+Diferenças vs Transportador:
+├─ ✗ Sem CNH
+├─ ✗ Sem CIOT
+├─ ✗ Sem dados de veículo
+├─ ✓ Dados mais simples (cliente)
+├─ ✓ Menos documentos (3 obrigatórios)
+└─ ✓ Endereço é ponto de coleta/entrega
+
+
+════════════════════════════════════════════════════════════════════════
+
+Arquivo sumário: RESUMO_TRANSPORTADOR_AUTONOMO_COMPLETO.txt
+
+Status: ✅ FASE 7 100% COMPLETA
+
+Rota live: http://localhost:3000/registro/transportador-autonomo
+
+Próximo: Fase 8 (Embarcador CPF + CNPJ) - Quer começar?
+
+════════════════════════════════════════════════════════════════════════

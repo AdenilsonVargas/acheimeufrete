@@ -1,0 +1,45 @@
+{
+  "name": "Credencial",
+  "type": "object",
+  "properties": {
+    "userId": {
+      "type": "string",
+      "description": "ID do usu\u00e1rio do Google (base44)"
+    },
+    "emailGoogle": {
+      "type": "string",
+      "description": "Email da conta Google"
+    },
+    "tipo": {
+      "type": "string",
+      "enum": [
+        "cliente",
+        "transportadora"
+      ],
+      "description": "Tipo de acesso"
+    },
+    "emailAcesso": {
+      "type": "string",
+      "description": "Email para login no sistema"
+    },
+    "senhaHash": {
+      "type": "string",
+      "description": "Senha criptografada"
+    },
+    "ativo": {
+      "type": "boolean",
+      "default": true
+    },
+    "perfilId": {
+      "type": "string",
+      "description": "ID do perfil (User com tipo)"
+    }
+  },
+  "required": [
+    "userId",
+    "emailGoogle",
+    "tipo",
+    "emailAcesso",
+    "senhaHash"
+  ]
+}

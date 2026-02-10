@@ -1,0 +1,639 @@
+{
+  "auditoria": {
+    "data": "2026-01-18",
+    "escopo": "Análise de páginas de EMBARCADOR que usam API calls via client.js",
+    "total_paginas_embarcador": 16,
+    "total_com_api_calls": 15
+  },
+  "embarcador": [
+    {
+      "arquivo": "Cotacoes.jsx",
+      "linhas": "1-80",
+      "tipo": "embarcador_puro",
+      "descricao": "Lista todas as cotações do embarcador (minhas cotações)",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.entities.cotacao.list",
+          "linhaNumero": 16,
+          "parametros": "{ owner: user?.id || 'me', limit: 50 }",
+          "comoDados": "setCotacoes(res?.data || res || [])",
+          "risco": "BAIXO - Trata fallback com 'res' e array vazio",
+          "observacao": "Padrão correto de manipulação de dados"
+        }
+      ]
+    },
+    {
+      "arquivo": "CotacoesAceitas.jsx",
+      "linhas": "1-60",
+      "tipo": "embarcador_puro",
+      "descricao": "Lista cotações aceitas pelo embarcador",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.entities.cotacao.filter",
+          "linhaNumero": 16,
+          "parametros": "{ status: 'aceita', owner: user?.id, limit: 50 }",
+          "comoDados": "setCotacoes(res?.data || res || [])",
+          "risco": "BAIXO - Padrão seguro com fallback",
+          "observacao": "Filtra apenas cotações com status 'aceita'"
+        }
+      ]
+    },
+    {
+      "arquivo": "CotacoesColetadas.jsx",
+      "linhas": "1-80",
+      "tipo": "embarcador_hibrido",
+      "descricao": "Lista cotações coletadas (embarcador ou transportador)",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.entities.cotacao.filter",
+          "linhaNumero": 18,
+          "parametros": "{ status: 'coletada', owner: user?.id, limit: 50 }",
+          "comoDados": "setCotacoes(res?.data || res || [])",
+          "risco": "BAIXO - Tratamento correto de resposta",
+          "observacao": "Página híbrida: userType dinâmico conforme role do usuário"
+        }
+      ]
+    },
+    {
+      "arquivo": "NovaCotacao.jsx",
+      "linhas": "1-654",
+      "tipo": "embarcador_puro",
+      "descricao": "Criação de nova cotação com múltiplos dados relacionados",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.entities.produto.list",
+          "linhaNumero": 93,
+          "parametros": "{ clienteId: user?.id, limit: 100 }",
+          "comoDados": "setProdutos(prodRes?.data || prodRes || [])",
+          "risco": "BAIXO - Padrão seguro",
+          "observacao": "Promise.all com 3 chamadas em paralelo"
+        },
+        {
+          "numero": 2,
+          "metodo": "api.entities.destinatario.list",
+          "linhaNumero": 94,
+          "parametros": "{ clienteId: user?.id, limit: 100 }",
+          "comoDados": "setDestinatarios(destRes?.data || destRes || [])",
+          "risco": "BAIXO - Padrão seguro",
+          "observacao": "Carregamento paralelo com produtos e endereços"
+        },
+        {
+          "numero": 3,
+          "metodo": "api.entities.enderecoColeta.list",
+          "linhaNumero": 95,
+          "parametros": "{ clienteId: user?.id, limit: 100 }",
+          "comoDados": "setEnderecosColeta(endRes?.data || endRes || [])",
+          "risco": "BAIXO - Padrão seguro",
+          "observacao": "Terceira chamada paralela do Promise.all"
+        },
+        {
+          "numero": 4,
+          "metodo": "api.entities.cotacao.create",
+          "linhaNumero": 265,
+          "parametros": "cotacaoData (objeto com 20+ campos)",
+          "comoDados": "const res = await api.entities.cotacao.create(cotacaoData); const id = res?.id || res?._id; navigate(id ? `/cotacoes/${id}` : '/cotacoes');",
+          "risco": "MÉDIO - Não verifica se res.id é nulo após fallback",
+          "observacao": "Trata resposta e navega, mas fallback duplo pode causar navegação para '/cotacoes' mesmo com erro"
+        }
+      ]
+    },
+    {
+      "arquivo": "Dashboard.jsx",
+      "linhas": "1-270",
+      "tipo": "embarcador_puro",
+      "descricao": "Dashboard principal do embarcador com estatísticas",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "NENHUMA API CALL",
+          "linhaNumero": "N/A",
+          "parametros": "N/A",
+          "comoDados": "Usa mock data em useEffect",
+          "risco": "BAIXO - Sem chamadas reais",
+          "observacao": "Dados simulados: cotacoesAbertas, cotacoesAceitas, etc"
+        }
+      ]
+    },
+    {
+      "arquivo": "ConfirmarColeta.jsx",
+      "linhas": "1-278",
+      "tipo": "embarcador_puro",
+      "descricao": "Confirmação de coletas para embarcador",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.entities.cotacao.list",
+          "linhaNumero": 27,
+          "parametros": "{ status: 'em_andamento', clienteId: user?.id, limit: 100 }",
+          "comoDados": "const pendentes = (resEmAndamento?.data || resEmAndamento || []).filter(...)",
+          "risco": "BAIXO - Trata fallback e filtra resultado",
+          "observacao": "Carrega cotações em andamento aguardando coleta"
+        },
+        {
+          "numero": 2,
+          "metodo": "api.entities.cotacao.list",
+          "linhaNumero": 38,
+          "parametros": "{ status: 'coletada', clienteId: user?.id, limit: 100 }",
+          "comoDados": "setColetasConfirmadas(resConfirmadas?.data || resConfirmadas || [])",
+          "risco": "BAIXO - Padrão seguro",
+          "observacao": "Carrega cotações já coletadas"
+        },
+        {
+          "numero": 3,
+          "metodo": "api.entities.cotacao.update",
+          "linhaNumero": 84,
+          "parametros": "cotacaoId, { status: 'coletada', codigoConfirmacaoColeta, dataHoraColetaConfirmada }",
+          "comoDados": "Sucesso: 'Coleta confirmada com sucesso!' e chama fetchColetas()",
+          "risco": "BAIXO - Recarrega lista após sucesso",
+          "observacao": "Validação de código de confirmação antes da chamada"
+        }
+      ]
+    },
+    {
+      "arquivo": "Destinatarios.jsx",
+      "linhas": "1-526",
+      "tipo": "embarcador_hibrido",
+      "descricao": "CRUD de destinatários (clientes de entrega)",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.entities.destinatario.list",
+          "linhaNumero": 44,
+          "parametros": "{ clienteId: user?.id, limit: 50 }",
+          "comoDados": "setDestinatarios(res?.data || res || [])",
+          "risco": "BAIXO - Padrão seguro",
+          "observacao": "Carregamento inicial em useEffect"
+        },
+        {
+          "numero": 2,
+          "metodo": "api.entities.destinatario.create",
+          "linhaNumero": 190,
+          "parametros": "destinatarioData (nome, cep, logradouro, etc)",
+          "comoDados": "setDestinatarios([...destinatarios, res])",
+          "risco": "MÉDIO - Assume que res contém todos os campos esperados",
+          "observacao": "Não valida estrutura de resposta antes de adicionar ao state"
+        },
+        {
+          "numero": 3,
+          "metodo": "api.entities.destinatario.update",
+          "linhaNumero": 185,
+          "parametros": "editingId, destinatarioData",
+          "comoDados": "setDestinatarios(destinatarios.map(d => (d.id || d._id) === editingId ? { ...d, ...destinatarioData } : d))",
+          "risco": "BAIXO - Merge seguro de dados",
+          "observacao": "Atualiza destinatário na lista"
+        },
+        {
+          "numero": 4,
+          "metodo": "api.entities.destinatario.delete",
+          "linhaNumero": 220,
+          "parametros": "id",
+          "comoDados": "setDestinatarios(destinatarios.filter(e => (e.id || e._id) !== id))",
+          "risco": "BAIXO - Remove do state após sucesso",
+          "observacao": "Delete simples com confirmação"
+        }
+      ]
+    },
+    {
+      "arquivo": "EnderecosColeta.jsx",
+      "linhas": "1-110",
+      "tipo": "embarcador_hibrido",
+      "descricao": "Gerenciamento de endereços de coleta",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.entities.enderecoColeta.list",
+          "linhaNumero": 17,
+          "parametros": "{ owner: user?.id, limit: 50 }",
+          "comoDados": "setEnderecos(res?.data || res || [])",
+          "risco": "BAIXO - Padrão seguro",
+          "observacao": "Carrega endereços do proprietário"
+        },
+        {
+          "numero": 2,
+          "metodo": "api.entities.enderecoColeta.create",
+          "linhaNumero": 34,
+          "parametros": "{ ...form, owner: user?.id }",
+          "comoDados": "setEnderecos([...enderecos, form])",
+          "risco": "ALTO - Usa form diretamente sem aguardar resposta da API",
+          "observacao": "NÃO usa resposta do servidor - RISCO: dado pode estar incompleto sem IDs do backend"
+        },
+        {
+          "numero": 3,
+          "metodo": "api.entities.enderecoColeta.delete",
+          "linhaNumero": 43,
+          "parametros": "id",
+          "comoDados": "setEnderecos(enderecos.filter(e => (e.id || e._id) !== id))",
+          "risco": "BAIXO - Remove após sucesso",
+          "observacao": "Filtra corretamente com fallback id/\_id"
+        }
+      ]
+    },
+    {
+      "arquivo": "Produtos.jsx",
+      "linhas": "1-510",
+      "tipo": "embarcador_hibrido",
+      "descricao": "CRUD de produtos com NCM e flags",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.entities.produto.list",
+          "linhaNumero": 51,
+          "parametros": "{ clienteId: user?.id, limit: 50 }",
+          "comoDados": "setProdutos(res?.data || res || [])",
+          "risco": "BAIXO - Padrão seguro",
+          "observacao": "Carregamento inicial de produtos do cliente"
+        },
+        {
+          "numero": 2,
+          "metodo": "api.entities.produto.create",
+          "linhaNumero": 136,
+          "parametros": "produtoData (nome, ncmCode, peso, dimensões, etc)",
+          "comoDados": "setProdutos([...produtos, res])",
+          "risco": "MÉDIO - Assume resposta com estrutura esperada",
+          "observacao": "Adiciona resposta diretamente sem validação"
+        },
+        {
+          "numero": 3,
+          "metodo": "api.entities.produto.update",
+          "linhaNumero": 132,
+          "parametros": "editingId, produtoData",
+          "comoDados": "setProdutos(produtos.map(p => (p.id || p._id) === editingId ? { ...p, ...produtoData } : p))",
+          "risco": "BAIXO - Merge seguro",
+          "observacao": "Atualiza produto com merge de dados"
+        },
+        {
+          "numero": 4,
+          "metodo": "api.entities.produto.delete",
+          "linhaNumero": 156,
+          "parametros": "id",
+          "comoDados": "setProdutos(produtos.filter(p => (p.id || p._id) !== id))",
+          "risco": "BAIXO - Remove após confirmação",
+          "observacao": "Delete com window.confirm antes"
+        }
+      ]
+    },
+    {
+      "arquivo": "Pagamentos.jsx",
+      "linhas": "1-121",
+      "tipo": "embarcador_hibrido",
+      "descricao": "Processamento de pagamentos do embarcador",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.entities.pagamento.create",
+          "linhaNumero": 22,
+          "parametros": "{ ...formData, usuarioId: user?.id }",
+          "comoDados": "Sucesso: setSuccess(true) após 3s; sem usar resposta",
+          "risco": "BAIXO - Validação simples, sem dependência de resposta",
+          "observacao": "Formulário simples sem lógica complexa de dados"
+        }
+      ]
+    },
+    {
+      "arquivo": "Perfil.jsx",
+      "linhas": "1-150",
+      "tipo": "embarcador_hibrido",
+      "descricao": "Edição de perfil do usuário",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.auth.updateMe",
+          "linhaNumero": 24,
+          "parametros": "perfil (objeto com dados do usuário)",
+          "comoDados": "Sucesso: setSaved(true) após 3s",
+          "risco": "BAIXO - Sem dependência crítica de resposta",
+          "observacao": "Atualiza perfil local e exibe feedback visual"
+        }
+      ]
+    },
+    {
+      "arquivo": "DetalheCotacao.jsx",
+      "linhas": "1-70",
+      "tipo": "embarcador_hibrido",
+      "descricao": "Visualização de detalhes de uma cotação",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.entities.cotacao.get",
+          "linhaNumero": 20,
+          "parametros": "id (do useParams)",
+          "comoDados": "setCotacao(res?.data || res)",
+          "risco": "BAIXO - Tratamento de fallback simples",
+          "observacao": "Get simples de um único item"
+        }
+      ]
+    },
+    {
+      "arquivo": "DetalheEntregaCliente.jsx",
+      "linhas": "1-165",
+      "tipo": "embarcador_hibrido",
+      "descricao": "Detalhes da entrega para o embarcador (cliente)",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.entities.cotacao.filter",
+          "linhaNumero": 21,
+          "parametros": "{ status: 'em_andamento', owner: user?.id, limit: 10 }",
+          "comoDados": "if (entregas?.data?.[0]) { setEntrega(entregas.data[0]); ... }",
+          "risco": "MÉDIO - Acessa array sem validação de tamanho",
+          "observacao": "Usa optional chaining mas poderia ser mais explícito"
+        },
+        {
+          "numero": 2,
+          "metodo": "api.entities.historico.list",
+          "linhaNumero": 24,
+          "parametros": "{ cotacaoId: entregas.data[0].id }",
+          "comoDados": "setHistorico(hist?.data || [])",
+          "risco": "BAIXO - Fallback para array vazio",
+          "observacao": "Carrega histórico de rastreamento"
+        }
+      ]
+    },
+    {
+      "arquivo": "ChatConversa.jsx",
+      "linhas": "1-80",
+      "tipo": "embarcador_hibrido",
+      "descricao": "Conversa em chat entre embarcador e transportador",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.entities.chat.get",
+          "linhaNumero": 24,
+          "parametros": "id (do useParams)",
+          "comoDados": "setMensagens(res?.mensagens || [])",
+          "risco": "BAIXO - Extrai campo mensagens com fallback",
+          "observacao": "Chat híbrido para embarcador/transportador"
+        },
+        {
+          "numero": 2,
+          "metodo": "api.entities.chat.update",
+          "linhaNumero": 41,
+          "parametros": "id, { mensagens: [...mensagens, novaMensagem] }",
+          "comoDados": "setMensagens([...mensagens, { texto, remetente, data }])",
+          "risco": "MÉDIO - Não aguarda confirmação do servidor antes de atualizar UI",
+          "observacao": "Atualiza state antes de confirmar envio - risco de desincronização"
+        }
+      ]
+    },
+    {
+      "arquivo": "Chats.jsx",
+      "linhas": "1-75",
+      "tipo": "embarcador_hibrido",
+      "descricao": "Lista de conversas do usuário",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.entities.chat.list",
+          "linhaNumero": 16,
+          "parametros": "{ usuarioId: user?.id, limit: 50 }",
+          "comoDados": "setChats(res?.data || res || [])",
+          "risco": "BAIXO - Padrão seguro",
+          "observacao": "Carrega lista de chats do usuário"
+        }
+      ]
+    },
+    {
+      "arquivo": "NegociacaoCTe.jsx",
+      "linhas": "1-341",
+      "tipo": "embarcador_puro",
+      "descricao": "Negociação de CTe e contrapropostas de frete",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.entities.cotacao.list",
+          "linhaNumero": 30,
+          "parametros": "{ status: 'em_andamento', limit: 100 }",
+          "comoDados": "const todasCotacoes = res?.data || res || []; depois filtra por clienteId",
+          "risco": "BAIXO - Padrão seguro com filtro posterior",
+          "observacao": "Carrega todas e filtra localmente por role do usuário"
+        },
+        {
+          "numero": 2,
+          "metodo": "api.entities.cotacao.update",
+          "linhaNumero": "~95",
+          "parametros": "cotacaoId, { status: novoStatus, ... }",
+          "comoDados": "Sucesso: setSuccess com mensagem, depois fetchNegociacoes()",
+          "risco": "BAIXO - Recarrega lista após atualização",
+          "observacao": "Suporta 3 tipos de decisão: aprovar, rejeitar, contraproposição"
+        }
+      ]
+    },
+    {
+      "arquivo": "CompletarCadastro.jsx",
+      "linhas": "1-190",
+      "tipo": "embarcador_hibrido",
+      "descricao": "Wizard para completar cadastro em etapas",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.auth.updatePerfil",
+          "linhaNumero": 42,
+          "parametros": "{ status: 'completo' }",
+          "comoDados": "Sucesso: alert() e completion",
+          "risco": "BAIXO - Simples atualização de status",
+          "observacao": "Chamada única ao final do wizard"
+        }
+      ]
+    },
+    {
+      "arquivo": "PacotesPremium.jsx",
+      "linhas": "1-175",
+      "tipo": "embarcador_hibrido",
+      "descricao": "Visualização e assinatura de planos premium",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.entities.pacotePremium.list",
+          "linhaNumero": 16,
+          "parametros": "{ limit: 10 }",
+          "comoDados": "setPacotes(res?.data || res || [])",
+          "risco": "BAIXO - Padrão seguro",
+          "observacao": "Carrega lista de pacotes disponíveis"
+        },
+        {
+          "numero": 2,
+          "metodo": "api.entities.assinaturaPremium.get",
+          "linhaNumero": 19,
+          "parametros": "user?.id",
+          "comoDados": "setPlanoAtual(userPlan?.plano || null)",
+          "risco": "BAIXO - Extrai campo plano com fallback null",
+          "observacao": "Identifica qual plano está ativo"
+        },
+        {
+          "numero": 3,
+          "metodo": "api.entities.assinaturaPremium.create",
+          "linhaNumero": 34,
+          "parametros": "{ usuarioId, pacoteId, dataInicio, dataFim, status: 'ativo' }",
+          "comoDados": "Sucesso: alert() simples",
+          "risco": "BAIXO - Sem uso crítico de resposta",
+          "observacao": "Cria assinatura com datas calculadas (30 dias)"
+        }
+      ]
+    },
+    {
+      "arquivo": "ChatSuporte.jsx",
+      "linhas": "1-166",
+      "tipo": "embarcador_hibrido",
+      "descricao": "Suporte ao cliente com chat com equipe de suporte",
+      "apiCalls": [
+        {
+          "numero": 1,
+          "metodo": "api.entities.chat.filter",
+          "linhaNumero": 18,
+          "parametros": "{ tipo: 'suporte', usuarioId: user?.id, limit: 50 }",
+          "comoDados": "setConversas(res?.data || res || [])",
+          "risco": "BAIXO - Padrão seguro",
+          "observacao": "Carrega conversas de suporte do usuário"
+        },
+        {
+          "numero": 2,
+          "metodo": "api.entities.mensagem.filter",
+          "linhaNumero": 30,
+          "parametros": "{ chatId: selectedConversa.id, limit: 100 }",
+          "comoDados": "setMensagens(res?.data || res || [])",
+          "risco": "BAIXO - Padrão seguro",
+          "observacao": "Carrega mensagens de conversa selecionada"
+        },
+        {
+          "numero": 3,
+          "metodo": "api.entities.mensagem.create",
+          "linhaNumero": 38,
+          "parametros": "{ chatId, usuarioId: user?.id, conteudo, data, tipo: 'usuario' }",
+          "comoDados": "setMensagens([...mensagens, { conteudo, usuarioId, data, tipo }])",
+          "risco": "MÉDIO - Atualiza UI antes de confirmar no servidor",
+          "observacao": "Mesmo padrão problemático do ChatConversa.jsx"
+        },
+        {
+          "numero": 4,
+          "metodo": "api.entities.chat.create",
+          "linhaNumero": 52,
+          "parametros": "{ usuarioId: user?.id, tipo: 'suporte', assunto, status: 'aberto', dataCriacao }",
+          "comoDados": "setConversas([...conversas, novaConversa])",
+          "risco": "MÉDIO - Assume resposta com estrutura correta",
+          "observacao": "Cria nova conversa de suporte"
+        }
+      ]
+    }
+  ],
+  "resumo_riscos": {
+    "BAIXO": 35,
+    "MÉDIO": 10,
+    "ALTO": 1,
+    "total": 46
+  },
+  "problemas_identificados": [
+    {
+      "id": 1,
+      "titulo": "EnderecosColeta - Create sem validar resposta",
+      "severidade": "ALTO",
+      "arquivo": "EnderecosColeta.jsx",
+      "linhas": "34",
+      "descricao": "setEnderecos([...enderecos, form]) usa form local, não a resposta do servidor. Pode causar inconsistência de IDs",
+      "solucao": "const res = await api.entities.enderecoColeta.create({...form, owner: user?.id}); setEnderecos([...enderecos, res?.data || res]);"
+    },
+    {
+      "id": 2,
+      "titulo": "ChatConversa e ChatSuporte - Update otimista sem validação",
+      "severidade": "MÉDIO",
+      "arquivo": "ChatConversa.jsx, ChatSuporte.jsx",
+      "linhas": "41, 38",
+      "descricao": "Atualizam state ANTES de confirmar envio no servidor. Se falhar, mensagem fica no UI mas não foi salva",
+      "solucao": "Aguardar resposta da API antes de atualizar state, ou usar padrão optimistic com rollback"
+    },
+    {
+      "id": 3,
+      "titulo": "NovaCotacao - Fallback duplo para navigation",
+      "severidade": "MÉDIO",
+      "arquivo": "NovaCotacao.jsx",
+      "linhas": "268",
+      "descricao": "navigate(id ? `/cotacoes/${id}` : '/cotacoes') pode navegar para '/cotacoes' se res.id é undefined, mesmo com res?._id",
+      "solucao": "const id = res?.id || res?._id; if (!id) throw new Error('Resposta sem ID')"
+    },
+    {
+      "id": 4,
+      "titulo": "Destinatarios, Produtos - Create sem validar campos",
+      "severidade": "MÉDIO",
+      "arquivo": "Destinatarios.jsx, Produtos.jsx",
+      "linhas": "190, 136",
+      "descricao": "setProdutos([...produtos, res]) assume que res tem todos os campos necessários renderizados",
+      "solucao": "Validar estrutura de res antes de adicionar ao state"
+    },
+    {
+      "id": 5,
+      "titulo": "DetalheEntregaCliente - Array access sem validação explícita",
+      "severidade": "MÉDIO",
+      "arquivo": "DetalheEntregaCliente.jsx",
+      "linhas": "21-24",
+      "descricao": "if (entregas?.data?.[0]) é seguro, mas poderia ser mais explícito com length check",
+      "solucao": "if (entregas?.data && entregas.data.length > 0) para maior clareza"
+    }
+  ],
+  "padroes_encontrados": {
+    "corretos": [
+      {
+        "nome": "Fallback duplo seguro",
+        "exemplo": "res?.data || res || []",
+        "frequencia": 25,
+        "confiabilidade": "Alta"
+      },
+      {
+        "nome": "ID Fallback",
+        "exemplo": "c.id || c._id",
+        "frequencia": 30,
+        "confiabilidade": "Alta"
+      },
+      {
+        "nome": "Promise.all para chamadas paralelas",
+        "exemplo": "NovaCotacao.jsx linha 93-95",
+        "frequencia": 1,
+        "confiabilidade": "Alta"
+      },
+      {
+        "nome": "Recarregar após criar/atualizar",
+        "exemplo": "setSuccess() + fetchNegociacoes()",
+        "frequencia": 5,
+        "confiabilidade": "Alta"
+      }
+    ],
+    "problematicos": [
+      {
+        "nome": "Otimistic update sem rollback",
+        "exemplo": "ChatConversa.jsx, ChatSuporte.jsx",
+        "frequencia": 2,
+        "confiabilidade": "Baixa - sem tratamento de erro"
+      },
+      {
+        "nome": "Usar form ao invés de resposta API",
+        "exemplo": "EnderecosColeta.jsx linha 34",
+        "frequencia": 1,
+        "confiabilidade": "Baixa - pode perder IDs do servidor"
+      }
+    ]
+  },
+  "recomendacoes": [
+    {
+      "prioridade": "CRÍTICA",
+      "item": "Criar padrão consistente para todas as operações CRUD: sempre usar resposta da API, não dados locais"
+    },
+    {
+      "prioridade": "ALTA",
+      "item": "Implementar tratamento de erro com retry para ChatConversa e ChatSuporte"
+    },
+    {
+      "prioridade": "ALTA",
+      "item": "Adicionar validação de schema da resposta antes de atualizar state em create/update"
+    },
+    {
+      "prioridade": "MÉDIA",
+      "item": "Centralizar lógica de tratamento de resposta em utilitários reutilizáveis"
+    },
+    {
+      "prioridade": "MÉDIA",
+      "item": "Adicionar logging estruturado para rastrear falhas de API calls"
+    }
+  ]
+}

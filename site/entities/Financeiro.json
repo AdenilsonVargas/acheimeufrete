@@ -1,0 +1,108 @@
+{
+  "name": "Financeiro",
+  "type": "object",
+  "properties": {
+    "transportadoraId": {
+      "type": "string",
+      "description": "ID da transportadora"
+    },
+    "transportadoraNome": {
+      "type": "string",
+      "description": "Nome da transportadora"
+    },
+    "mesReferencia": {
+      "type": "string",
+      "description": "M\u00eas de refer\u00eancia (YYYY-MM)"
+    },
+    "cotacoes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cotacaoId": {
+            "type": "string"
+          },
+          "numeroCotacao": {
+            "type": "string"
+          },
+          "valorCotacao": {
+            "type": "number"
+          },
+          "valorTransportadora": {
+            "type": "number",
+            "description": "Valor a receber (95%)"
+          },
+          "valorComissao": {
+            "type": "number",
+            "description": "Comiss\u00e3o plataforma (5%)"
+          },
+          "dataFinalizacao": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "default": [],
+      "description": "Lista de cota\u00e7\u00f5es finalizadas no m\u00eas"
+    },
+    "valorTotalCotacoes": {
+      "type": "number",
+      "default": 0,
+      "description": "Soma de todos os valores das cota\u00e7\u00f5es"
+    },
+    "valorTotalTransportadora": {
+      "type": "number",
+      "default": 0,
+      "description": "Valor total a receber pela transportadora (95%)"
+    },
+    "valorTotalComissao": {
+      "type": "number",
+      "default": 0,
+      "description": "Soma de todas as comiss\u00f5es (5%)"
+    },
+    "boletoGerado": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se o boleto j\u00e1 foi gerado"
+    },
+    "dataBoletoGerado": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data de gera\u00e7\u00e3o do boleto"
+    },
+    "boletoPago": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se o boleto j\u00e1 foi pago"
+    },
+    "dataBoletoPago": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data de pagamento do boleto"
+    },
+    "notaEmitida": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se a nota fiscal foi emitida"
+    },
+    "dataNotaEmitida": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data de emiss\u00e3o da nota"
+    },
+    "statusPagamento": {
+      "type": "string",
+      "enum": [
+        "pendente",
+        "liberado",
+        "pago"
+      ],
+      "default": "pendente",
+      "description": "Status do pagamento \u00e0 transportadora"
+    }
+  },
+  "required": [
+    "transportadoraId",
+    "mesReferencia"
+  ]
+}

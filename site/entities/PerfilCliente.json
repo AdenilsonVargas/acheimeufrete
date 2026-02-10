@@ -1,0 +1,168 @@
+{
+  "name": "PerfilCliente",
+  "type": "object",
+  "properties": {
+    "userIdGoogle": {
+      "type": "string",
+      "description": "ID do usu\u00e1rio Google da base44"
+    },
+    "emailAcesso": {
+      "type": "string",
+      "description": "Email usado para login como cliente"
+    },
+    "nomeCompleto": {
+      "type": "string"
+    },
+    "cpfOuCnpj": {
+      "type": "string"
+    },
+    "telefoneComercial": {
+      "type": "string"
+    },
+    "telefonePessoal": {
+      "type": "string"
+    },
+    "documentoCpfScan": {
+      "type": "string",
+      "description": "URL do documento CPF ou CNPJ"
+    },
+    "documentoComprovanteEndereco": {
+      "type": "string",
+      "description": "URL do comprovante de endere\u00e7o"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected",
+        "blocked"
+      ],
+      "default": "pending"
+    },
+    "motivoRejeicao": {
+      "type": "string",
+      "description": "Motivo da rejei\u00e7\u00e3o do cadastro"
+    },
+    "isPremium": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se o cliente tem acesso premium"
+    },
+    "avaliacaoMedia": {
+      "type": "number",
+      "default": 0,
+      "description": "M\u00e9dia de avalia\u00e7\u00f5es recebidas (0-5)"
+    },
+    "totalAvaliacoes": {
+      "type": "integer",
+      "default": 0,
+      "description": "Total de avalia\u00e7\u00f5es recebidas"
+    },
+    "saldoCashback": {
+      "type": "number",
+      "default": 0,
+      "description": "Saldo acumulado de cashback (15% de valores a mais)"
+    },
+    "saldoCreditos": {
+      "type": "number",
+      "default": 0,
+      "description": "Saldo de cr\u00e9ditos pr\u00e9-pagos para cota\u00e7\u00f5es"
+    },
+    "historicoCreditos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "adicao",
+              "uso",
+              "estorno"
+            ]
+          },
+          "valor": {
+            "type": "number"
+          },
+          "descricao": {
+            "type": "string"
+          },
+          "cotacaoId": {
+            "type": "string"
+          },
+          "pagamentoId": {
+            "type": "string"
+          },
+          "data": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "default": [],
+      "description": "Hist\u00f3rico de movimenta\u00e7\u00e3o de cr\u00e9ditos"
+    },
+    "historicoValoresAMais": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cotacaoId": {
+            "type": "string"
+          },
+          "valorOriginal": {
+            "type": "number"
+          },
+          "valorFinal": {
+            "type": "number"
+          },
+          "diferenca": {
+            "type": "number"
+          },
+          "cashback": {
+            "type": "number"
+          },
+          "data": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "default": [],
+      "description": "Hist\u00f3rico de valores a mais pagos"
+    },
+    "historicoValoresAMenos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cotacaoId": {
+            "type": "string"
+          },
+          "valorOriginal": {
+            "type": "number"
+          },
+          "valorFinal": {
+            "type": "number"
+          },
+          "diferenca": {
+            "type": "number"
+          },
+          "data": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "default": [],
+      "description": "Hist\u00f3rico de valores a menos pagos (apenas registro)"
+    }
+  },
+  "required": [
+    "userIdGoogle",
+    "emailAcesso",
+    "nomeCompleto",
+    "cpfOuCnpj"
+  ]
+}

@@ -1,0 +1,721 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  telefone  String?
+  userType  String // "embarcador", "transportador"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // CAMPO DE STATUS DO CADASTRO
+  statusCadastro String @default("pendente") // "pendente", "em_progresso", "completo", "aprovado", "rejeitado"
+  dataSolicitacaoAprovacao DateTime?
+  motivoRejeicaoCadastro String?
+
+  // FOTO DO PERFIL
+  fotoPerfil String?
+
+  // INFORMAÇÕES BÁSICAS
+  nomeCompleto String?
+  sobrenome String?
+  cpfOuCnpj    String?
+  nomeFantasia String?
+
+  // INFORMAÇÕES DE TRANSPORTADOR
+  tipoTransportador String? // "pj", "autonomo"
+  razaoSocial       String?
+  cnpj              String?
+  cpf               String?
+  rg                String?
+  inscricaoEstadual String?
+  nomeResponsavel   String?
+  sobrenomeResponsavel String?
+  cpfResponsavel    String?
+  rgResponsavel     String?
+  dataVencimentoCNH DateTime?
+
+  // INFORMAÇÕES DE AUTONOMIA E CIOT
+  ehAutonomoCiot Boolean @default(false)
+  emiteCiot Boolean @default(false)
+  inscricaoMunicipal String?
+
+  // QUANTIDADE DE VEÍCULOS (apenas PJ)
+  quantidadeVeiculos Int? // null = não definido, 0 = múltiplos, 1 = único veículo
+
+  // Autorização de Pagamento via Boleto (apenas embarcadores)
+  autorizadoBoleto Boolean @default(false)
+  dataAutorizacaoBoleto DateTime?
+  solicitacaoBoletoStatus String?
+  dataSolicitacaoBoleto DateTime?
+  justificativaRejeicaoBoleto String?
+
+  enderecos            Endereco[]
+  perfil               PerfilCliente?
+  perfilTransportadora PerfilTransportadora?
+  cotacoes             Cotacao[]
+  cotacoesFavoritas    CotacaoFavorita[]
+  respostas            RespostaCotacao[]
+  pagamentos           Pagamento[]
+  mensagens            Mensagem[]
+  produtos             Produto[]
+  destinatarios        Destinatario[]
+  enderecosColeta      EnderecoColeta[]
+  ncmsAtendidos        NCMAtendido[]
+  regioesAtendidas     RegiaoAtendida[]
+  avaliacoesFeitas     Avaliacao[]         @relation("AvaliadorTransportadora")
+  avaliacoesRecebidas  Avaliacao[]         @relation("AvaliadoTransportadora")
+  avaliacoesClienteFeitas    AvaliacaoCliente[] @relation("AvaliadorCliente")
+  avaliacoesClienteRecebidas AvaliacaoCliente[] @relation("AvaliadoCliente")
+  financeiros          Financeiro[]
+  documentos           Documento[]
+  veiculos             Veiculo[]
+
+  @@index([email])
+  @@index([userType])
+  @@index([statusCadastro])
+}
+
+model Endereco {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  cep         String
+  logradouro  String
+  numero      String
+  complemento String?
+  bairro      String
+  cidade      String
+  estado      String
+
+  tipo      String
+  principal Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([cep])
+}
+
+model EnderecoColeta {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  nome            String
+  cep             String
+  logradouro      String
+  numero          String
+  complemento     String?
+  bairro          String
+  cidade          String
+  estado          String
+  padrao          Boolean @default(false)
+
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([cep])
+  @@unique([userId, nome])
+}
+
+model PerfilCliente {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  numeroTaxasAceitas Int   @default(0)
+  taxaMedia          Float @default(0)
+  avaliacaoMedia     Float @default(5)
+
+  // Informações do remetente/cliente
+  tipoPessoa String? // "cpf" ou "cnpj"
+  ehPJ Boolean @default(false)
+
+  // STATUS DE DOCUMENTOS
+  statusDocumentos String @default("pendente") // "pendente", "em_analise", "aprovado", "rejeitado"
+  dataUltimaSolicitacaoAprovacao DateTime?
+  motivoRejeicaoDocumentos String?
+
+  // FOTO DO PERFIL
+  fotoPerfil String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PerfilTransportadora {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  numeroFretes      Int    @default(0)
+  avaliacaoMedia    Float  @default(5)
+  totalAvaliacoes   Int    @default(0)
+  statusVerificacao String @default("pendente")
+
+  // Informações tipo de transportador
+  tipoTransportador String? // "pj", "autonomo"
+  ehAutonomoCiot Boolean @default(false)
+  emiteCiot Boolean @default(false)
+  raioAtencaoKm Int?
+
+  // STATUS DE DOCUMENTOS
+  statusDocumentos String @default("pendente") // "pendente", "em_analise", "aprovado", "rejeitado"
+  dataUltimaSolicitacaoAprovacao DateTime?
+  motivoRejeicaoDocumentos String?
+
+  // QUANTIDADE DE VEÍCULOS (apenas PJ)
+  quantidadeVeiculos Int? // null = não definido, 0 = múltiplos, 1 = único veículo
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// MODEL DE DOCUMENTOS
+model Documento {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // TIPO DE DOCUMENTO
+  tipo String // "CPF", "RG", "CNH", "CNPJ", "CRLV", "CIOT", "COMPROVANTE_ENDERECO", "CARTAO_CNPJ", etc
+  
+  // ARQUIVO
+  url String // URL do arquivo (S3 ou outro storage)
+  nomeArquivo String?
+  tipoMime String? // "application/pdf", "image/jpeg", etc
+  tamanhoBytes Int?
+
+  // VENCIMENTO E STATUS
+  dataVencimento DateTime?
+  dataUpload DateTime @default(now())
+  status String @default("pendente_analise") // "pendente_analise", "aprovado", "rejeitado", "vencido"
+  
+  // RASTREAMENTO
+  motivoRejeicao String?
+  dataAprovacao DateTime?
+  dataRejeicao DateTime?
+  analisadoPorAdmin Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([tipo])
+  @@index([status])
+  @@index([dataVencimento])
+}
+
+// MODEL DE VEÍCULOS
+model Veiculo {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // INFORMAÇÕES DO VEÍCULO
+  placa String
+  tipo String // "moto", "caminhao", "van", "carro", "trator", "reboque", etc
+  
+  // REGISTROS
+  renavam String?
+  chassi String?
+  
+  // DATAS E VENCIMENTOS
+  dataVencimentoCRLV DateTime?
+  dataVencimentoRastreVeiculo DateTime?
+  
+  // DOCUMENTOS
+  documentoCRLVUrl String?
+  documentoRastreVeiculoUrl String?
+  
+  // STATUS
+  status String @default("ativo") // "ativo", "vencido", "bloqueado"
+  dataProximaRenovacao DateTime?
+  
+  // INFORMAÇÕES ADICIONAIS
+  cor String?
+  ano Int?
+  marca String?
+  modelo String?
+  observacoes String?
+
+  ativo Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([placa])
+  @@index([status])
+  @@unique([userId, placa])
+}
+
+model Cotacao {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Número sequencial para identificação e organização
+  numero Int @unique @default(autoincrement())
+
+  titulo    String
+  descricao String?
+
+  // Dados do Remetente (embarcador/criador) - MAIÚSCULA para NF
+  remetenteTipoPessoa String?
+  remetenteCPF        String?
+  remetenteCNPJ       String?
+  remetenteNome       String?
+
+  // Dados do Destinatário (salvo na cotação para NF) - MAIÚSCULA
+  destinatarioId          String?
+  destinatarioNome        String?
+  destinatarioTipoPessoa  String?
+  destinatarioCPF         String?
+  destinatarioCNPJ        String?
+  destinatarioCodigoCadastro String?
+  destinatarioObservacoes String?
+  destinatarioCep         String?
+  destinatarioEndereco    String?
+  destinatarioCidade      String?
+  destinatarioEstado      String?
+
+  // Endereço de Coleta nomeado - MAIÚSCULA para NF
+  enderecoColetaId       String?
+  enderecoColetaNome     String?
+  cepColeta              String
+  enderecoColeta         String
+  bairroColeta           String?
+  cidadeColeta           String?
+  estadoColeta           String?
+  complementoColeta      String?
+  dataColeta             DateTime
+
+  // Endereço de Entrega - MAIÚSCULA
+  cepEntrega      String
+  enderecoEntrega String
+  bairroEntrega   String?
+  cidadeEntrega   String?
+  estadoEntrega   String?
+  complementoEntrega String?
+  dataEntrega     DateTime?
+
+  peso         Float?
+  altura       Float?
+  largura      Float?
+  profundidade Float?
+
+  valorEstimado Float?
+  valorMinimo   Float?
+  valorMaximo   Float?
+
+  status String @default("aberta")
+  dataHoraFim    DateTime? // Data/hora de expiração da cotação
+
+  // Fluxo e documentos
+  respostaSelecionadaId   String? @unique
+  transportadorSelecionadoId String?
+  valorFinalTransportadora Float?
+  codigoConfirmacaoColeta String?
+  dataColetaRealizada     DateTime?
+  dataEntregaRealizada    DateTime?
+  codigoCte               String?
+  documentoCte            String?
+  cteRegistrado           Boolean  @default(false)
+  codigoCiot              String?
+  documentoCiot           String?
+  ciotRegistrado          Boolean  @default(false)
+  codigoMdfe              String?
+  documentoMdfe           String?
+  mdfeRegistrado          Boolean  @default(false)
+  documentoCanhoto        String?
+  urlRastreamento         String?
+  codigoRastreio          String?
+  motivoAtraso            String?
+  atrasoInformado         Boolean  @default(false)
+  avaliada                Boolean  @default(false)
+
+  // Segurança Financeira
+  statusPagamento String @default("nao_iniciado")
+  metodosPagamento String?
+  requerPagamentoObrigatorio Boolean @default(false)
+  pagamentoConfirmadoEm DateTime?
+  autorizadoColeta Boolean @default(false)
+  dataAutorizacaoColeta DateTime?
+  motivoBloqueioColeta String?
+
+  // Boleto
+  boletoGerado Boolean @default(false)
+  dataBoletoGerado DateTime?
+  boletoPago Boolean @default(false)
+  dataBoletoPago DateTime?
+
+  // Informações de Remetente/Destinatário
+  tipoPessoaRemetente String?
+  tipoPessoaDestinatario String?
+
+  respostas RespostaCotacao[] @relation("CotacaoRespostas")
+  respostaSelecionada RespostaCotacao? @relation("CotacaoRespostaSelecionada", fields: [respostaSelecionadaId], references: [id])
+  pagamentos Pagamento[] @relation("CotacaoPagamentos")
+  avaliacoes Avaliacao[]
+  avaliacoesCliente AvaliacaoCliente[]
+  cotacoesFavoritas CotacaoFavorita[]
+  chats     Chat[]
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([dataColeta])
+}
+
+model RespostaCotacao {
+  id        String  @id @default(cuid())
+  cotacaoId String
+  cotacao   Cotacao @relation("CotacaoRespostas", fields: [cotacaoId], references: [id], onDelete: Cascade)
+
+  transportadorId String
+  transportador   User   @relation(fields: [transportadorId], references: [id], onDelete: Cascade)
+
+  valor       Float
+  dataEntrega DateTime
+  descricao   String?
+
+  aceita Boolean @default(false)
+
+  // Informações visíveis para o cliente
+  tipoTransportador String?
+  ehAutonomoCiot Boolean @default(false)
+  pontuacaoVotacao Float @default(5)
+  totalAvaliacoes Int @default(0)
+
+  cotacaoSelecionada Cotacao? @relation("CotacaoRespostaSelecionada")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([cotacaoId])
+  @@index([transportadorId])
+}
+
+model Pagamento {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  valor  Float
+  status String @default("pendente")
+  metodo String
+
+  cotacaoId String?
+  cotacao   Cotacao? @relation("CotacaoPagamentos", fields: [cotacaoId], references: [id], onDelete: Cascade)
+
+  descricao  String?
+  referencia String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([cotacaoId])
+}
+
+model Chat {
+  id String @id @default(cuid())
+
+  // Relações
+  cotacaoId        String?
+  cotacao          Cotacao? @relation(fields: [cotacaoId], references: [id])
+  clienteId        String
+  transportadoraId String
+
+  // Tipo e Status
+  tipo   String @default("normal") // "normal", "negociacao_cte", "coleta_confirmacao"
+  status String @default("ativo") // "ativo", "bloqueado", "expirado", "aguardando_cliente", "aguardando_transportadora", "aprovado", "rejeitado_final"
+
+  // Negociação CT-e
+  tentativasNegociacao Int     @default(0)
+  valorOriginalCotacao Float?
+  valorAtualProposta   Float?
+  motivoUltimaRejeicao String?
+
+  // Datas e Horários
+  dataHoraInicio         DateTime  @default(now())
+  dataHoraExpiracao      DateTime?
+  dataHoraUltimaMensagem DateTime?
+
+  // Restrições de Horário para Chat do Embarcador
+  horaAbertura   DateTime? // Até que hora o embarcador pode abrir este chat (17:00 limite)
+  horaFechamento DateTime? // 23:59:59 do mesmo dia (fechamento automático)
+  statusChat     String    @default("aberto") // "aberto", "fechado_automatico", "arquivado"
+
+  // Controle de Leitura
+  lidoPorTransportadora Boolean @default(true)
+  lidoPorCliente        Boolean @default(true)
+
+  // Campos legados (manter para compatibilidade)
+  participantes      String[]
+  ultimaMensagem     String?
+  ultimaMensagemData DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mensagens Mensagem[]
+
+  @@index([cotacaoId])
+  @@index([clienteId])
+  @@index([transportadoraId])
+  @@index([tipo])
+  @@index([status])
+}
+
+model Mensagem {
+  id     String @id @default(cuid())
+  chatId String
+  chat   Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Conteúdo da mensagem
+  conteudo String
+
+  // Tipo de mensagem
+  remetente    String @default("cliente") // "cliente", "transportadora", "sistema"
+  tipoMensagem String @default("texto") // "texto", "arquivo", "proposta_valor", "aprovacao", "rejeicao", "contra_proposta", "devolucao"
+
+  // Campos para negociação
+  valorProposto  Float?
+  motivoRejeicao String?
+
+  // Anexos (documentos)
+  arquivoUrl  String?
+  arquivoNome String?
+  arquivoTipo String?
+
+  // Controle
+  lida Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([chatId])
+  @@index([userId])
+  @@index([tipoMensagem])
+}
+
+model Produto {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  nome             String
+  sku              String?
+  ncmCode          String
+  ncmClassificacao String?
+  unidadeMedida    String
+  pesoKg           Float?
+  larguraM         Float?
+  alturaM          Float?
+  comprimentoM     Float?
+  valorUnitario    Float?
+  flags            String[] @default([])
+  observacoes      String?
+
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([ncmCode])
+  @@unique([userId, nome])
+}
+
+// Master de NCMs para busca inteligente
+model NCM {
+  codigo          String   @id
+  descricao       String
+  classificacao   String?
+  caracteristicas String[] @default([])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([descricao])
+}
+
+model Destinatario {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  nomeCompleto          String
+  tipoPessoa            String  // "cpf" ou "cnpj"
+  cpf                   String?
+  cnpj                  String?
+  codigoCadastro        String? // Código para integração futura com sistema do cliente
+  cep                   String
+  logradouro            String
+  numero                String
+  complemento           String?
+  bairro                String
+  cidade                String
+  estado                String
+  pais                  String  @default("Brasil")
+  observacoes           String?
+  aceitaMotoCarAte100km Boolean @default(false)
+
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([cep])
+  @@unique([userId, nomeCompleto])
+}
+
+model NCMAtendido {
+  id              String @id @default(cuid())
+  transportadorId String
+  transportador   User   @relation(fields: [transportadorId], references: [id], onDelete: Cascade)
+
+  codigo    String
+  descricao String?
+  status    String  @default("ativo")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([transportadorId, codigo])
+  @@index([transportadorId])
+  @@index([status])
+}
+
+model RegiaoAtendida {
+  id              String @id @default(cuid())
+  transportadorId String
+  transportador   User   @relation(fields: [transportadorId], references: [id], onDelete: Cascade)
+
+  tipoCobertura String
+  estado        String?
+  cepInicio     String?
+  cepFim        String?
+  cidade        String?
+  raioKm        Float?
+
+  status String @default("ativo")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([transportadorId])
+  @@index([status])
+  @@index([estado])
+}
+
+model Avaliacao {
+  id           String @id @default(cuid())
+  cotacaoId    String
+  cotacao      Cotacao @relation(fields: [cotacaoId], references: [id], onDelete: Cascade)
+  avaliadorId  String
+  avaliador    User   @relation("AvaliadorTransportadora", fields: [avaliadorId], references: [id], onDelete: Cascade)
+  avaliadoId   String
+  avaliado     User   @relation("AvaliadoTransportadora", fields: [avaliadoId], references: [id], onDelete: Cascade)
+  nota         Int
+  comentario   String?
+  pontualidade Int?
+  comunicacao  Int?
+  qualidadeServico Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([cotacaoId])
+  @@index([avaliadoId])
+}
+
+model AvaliacaoCliente {
+  id          String @id @default(cuid())
+  cotacaoId   String
+  cotacao     Cotacao @relation(fields: [cotacaoId], references: [id], onDelete: Cascade)
+  avaliadorId String
+  avaliador   User   @relation("AvaliadorCliente", fields: [avaliadorId], references: [id], onDelete: Cascade)
+  avaliadoId  String
+  avaliado    User   @relation("AvaliadoCliente", fields: [avaliadoId], references: [id], onDelete: Cascade)
+  nota        Int
+  comentario  String?
+  pagamento   Int?
+  comunicacao Int?
+  organizacao Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([cotacaoId])
+  @@index([avaliadoId])
+}
+
+model Financeiro {
+  id               String @id @default(cuid())
+  transportadoraId String
+  transportadora   User   @relation(fields: [transportadoraId], references: [id], onDelete: Cascade)
+  mes              Int
+  ano              Int
+  totalFaturado    Float  @default(0)
+  totalComissao    Float  @default(0)
+  totalReceber     Float  @default(0)
+  numeroEntregas   Int    @default(0)
+  status           String @default("pendente")
+  dataPagamento    DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([transportadoraId, mes, ano])
+  @@index([status])
+}
+
+model CotacaoFavorita {
+  id                 String   @id @default(cuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cotacaoId          String
+  cotacao            Cotacao  @relation(fields: [cotacaoId], references: [id], onDelete: Cascade)
+  
+  // Nome único da favorita para identificação
+  nome               String   // Ex: "Frete SP-RJ Padrão", "Entrega Salvador"
+  
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@unique([userId, nome])
+  @@index([userId])
+  @@index([cotacaoId])
+}
+
+model Quote {
+  id        String @id @default(cuid())
+  texto     String
+  autor     String
+  categoria String @default("crescimento") // crescimento, investimento, empreendedorismo, napoleonhill
+  ativo     Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categoria])
+  @@index([ativo])
+}

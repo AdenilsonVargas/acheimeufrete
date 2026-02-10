@@ -1,0 +1,198 @@
+╔══════════════════════════════════════════════════════════════╗
+║                  COMANDOS RÁPIDOS                            ║
+║              Achei Meu Frete - Sistema Seguro                ║
+╚══════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚀 INICIAR O SISTEMA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+./START.sh
+
+Isso vai:
+  1. Parar tudo que estiver rodando
+  2. Validar que portas estão livres
+  3. Iniciar PostgreSQL
+  4. Iniciar Backend
+  5. Iniciar Frontend
+  6. Testar tudo
+  7. Mostrar credenciais de acesso
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🛑 PARAR O SISTEMA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+./STOP.sh
+
+Isso vai:
+  1. Parar Frontend (porta 3000)
+  2. Parar Backend (porta 5000)
+  3. Parar PostgreSQL (porta 5432)
+  4. Remover containers Docker
+  5. Limpar processos órfãos
+  6. Validar que tudo parou
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔄 REINICIAR O SISTEMA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+./START.sh
+
+(Não precisa fazer ./STOP.sh antes, o START já faz isso automaticamente)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 VER LOGS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Backend
+tail -f logs/backend.log
+
+# Frontend
+tail -f logs/frontend.log
+
+# Ambos ao mesmo tempo
+tail -f logs/*.log
+
+# Últimas 50 linhas do backend
+tail -50 logs/backend.log
+
+# Últimas 50 linhas do frontend
+tail -50 logs/frontend.log
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 VERIFICAR STATUS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Verificar se portas estão em uso
+lsof -i:3000  # Frontend
+lsof -i:5000  # Backend
+lsof -i:5432  # PostgreSQL
+
+# Verificar containers Docker
+docker ps
+
+# Verificar logs do PostgreSQL
+docker logs acheimeufrete-postgres-1
+
+# Verificar se PostgreSQL está aceitando conexões
+docker exec acheimeufrete-postgres-1 pg_isready -U postgres
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌐 ACESSAR O SISTEMA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Frontend:  http://localhost:3000
+Backend:   http://localhost:5000/api
+Database:  localhost:5432
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔐 CREDENCIAIS DE TESTE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Embarcador:
+  Email: embarcador@test.com
+  Senha: 123456
+
+Transportador PJ:
+  Email: transportador@test.com
+  Senha: 123456
+
+Transportador Autônomo:
+  Email: autonomo@test.com
+  Senha: 123456
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🧪 TESTAR LOGIN (via API)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+curl -X POST http://localhost:5000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"embarcador@test.com","password":"123456"}'
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔧 COMANDOS DE EMERGÊNCIA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Matar TUDO relacionado ao projeto
+pkill -f "node.*acheimeufrete"
+pkill -f "vite"
+docker-compose down
+
+# Matar processo específico por porta
+lsof -ti:3000 | xargs kill -9  # Frontend
+lsof -ti:5000 | xargs kill -9  # Backend
+lsof -ti:5432 | xargs kill -9  # PostgreSQL
+
+# Remover containers órfãos
+docker container prune -f
+
+# Remover todos os containers do projeto
+docker rm -f $(docker ps -a -q --filter name=acheimeufrete)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🗄️  BANCO DE DADOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Acessar PostgreSQL via Docker
+docker exec -it acheimeufrete-postgres-1 psql -U postgres -d acheimeufrete
+
+# Listar tabelas
+docker exec acheimeufrete-postgres-1 psql -U postgres -d acheimeufrete -c "\dt"
+
+# Ver usuários cadastrados
+docker exec acheimeufrete-postgres-1 psql -U postgres -d acheimeufrete -c "SELECT id, email, \"userType\" FROM \"User\";"
+
+# Ver NCMs (primeiros 10)
+docker exec acheimeufrete-postgres-1 psql -U postgres -d acheimeufrete -c "SELECT codigo, descricao FROM ncm LIMIT 10;"
+
+# Contar NCMs
+docker exec acheimeufrete-postgres-1 psql -U postgres -d acheimeufrete -c "SELECT COUNT(*) FROM ncm;"
+
+# Recriar usuários de teste
+cd backend && node prisma/seed.js && cd ..
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 ESTRUTURA DE ARQUIVOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+.env.config               # Configuração centralizada (NÃO MODIFICAR)
+START.sh                  # Iniciar sistema
+STOP.sh                   # Parar sistema
+logs/backend.log          # Logs do backend
+logs/frontend.log         # Logs do frontend
+logs/backend.pid          # PID do backend
+logs/frontend.pid         # PID do frontend
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📚 DOCUMENTAÇÃO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+GUIA_SISTEMA_SEGURO.md    # Documentação completa do sistema
+RESUMO_SISTEMA_SEGURO.md  # Resumo executivo
+SISTEMA_FUNCIONANDO.md    # Guia de uso básico
+COMANDOS_RAPIDOS.txt      # Este arquivo
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️  IMPORTANTE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. SEMPRE use ./START.sh para iniciar (não inicie manualmente)
+2. SEMPRE use ./STOP.sh para parar (não mate processos manualmente)
+3. NÃO modifique .env.config (portas são fixas)
+4. Se algo der errado, execute ./STOP.sh e depois ./START.sh
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ CHECKLIST RÁPIDO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[ ] Executar ./STOP.sh
+[ ] Executar ./START.sh
+[ ] Verificar "✅ SISTEMA INICIADO COM SUCESSO"
+[ ] Acessar http://localhost:3000
+[ ] Login com embarcador@test.com / 123456
+[ ] Testar funcionalidades
+[ ] Executar ./STOP.sh quando terminar
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Sistema seguro e pronto para uso! 🎉

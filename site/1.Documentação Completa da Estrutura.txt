@@ -1,0 +1,570 @@
+1.	Documentação Completa da Estrutura
+
+Estrutura de Dados e Relacionamentos:
+A arquitetura do seu aplicativo é baseada em uma série de entidades interconectadas, cada uma representando um conceito chave no gerenciamento de logística e transporte. Aqui está uma descrição de cada entidade, seus campos, tipos de dados, validações e como elas se relacionam:
+Entidades Principais:
+1.	User (Embutida no Base44):
+•	Descrição: Entidade de usuário embutida do Base44, que é a base para PerfilCliente e PerfilTransportadora.
+•	Campos:
+•	id: string (identificador único)
+•	created_date: datetime
+•	full_name: string
+•	email: string (único)
+•	role: string (admin ou user)
+•	Outros campos adicionais podem ser adicionados em entities/User.json.
+•	Relacionamentos:
+•	Um para um com PerfilCliente (via userIdGoogle).
+•	Um para um com PerfilTransportadora (via userIdGoogle).
+•	Um para um com Credencial (via userId).
+2.	PerfilCliente:
+•	Descrição: Detalhes específicos do perfil de um cliente.
+•	Campos:
+•	userIdGoogle: string (ID do usuário Google da base44) - Obrigatório
+•	emailAcesso: string (Email usado para login como cliente) - Obrigatório
+•	nomeCompleto: string - Obrigatório
+•	cpfOuCnpj: string - Obrigatório
+•	telefoneComercial: string
+•	telefonePessoal: string
+•	documentoCpfScan: string (URL do documento CPF ou CNPJ)
+•	documentoComprovanteEndereco: string (URL do comprovante de endereço)
+•	status: string (pending, approved, rejected, blocked) - Padrão: pending
+•	motivoRejeicao: string
+•	isPremium: boolean - Padrão: false
+•	avaliacaoMedia: number (0-5) - Padrão: 0
+•	totalAvaliacoes: integer - Padrão: 0
+•	saldoCashback: number - Padrão: 0
+•	saldoCreditos: number - Padrão: 0
+•	historicoCreditos: array de objetos (tipo, valor, descrição, cotacaoId, pagamentoId, data)
+•	historicoValoresAMais: array de objetos (cotacaoId, valorOriginal, valorFinal, diferenca, cashback, data)
+•	historicoValoresAMenos: array de objetos (cotacaoId, valorOriginal, valorFinal, diferenca, data)
+•	Relacionamentos:
+•	Um para um com User (via userIdGoogle).
+•	Um para muitos com Cotacao (via clienteId).
+•	Um para muitos com EnderecoColeta (via clienteId).
+•	Um para muitos com Produto (via clienteId).
+•	Um para muitos com Destinatario (via clienteId).
+•	Um para muitos com Chat (via clienteId).
+•	Um para muitos com Pagamento (via clienteId).
+•	Um para muitos com Avaliacao (como clienteId).
+•	Um para muitos com AssinaturaPremium (via userId).
+3.	PerfilTransportadora:
+•	Descrição: Detalhes específicos do perfil de uma transportadora.
+•	Campos:
+•	userIdGoogle: string (ID do usuário Google da base44) - Obrigatório
+•	emailAcesso: string (Email usado para login como transportadora) - Obrigatório
+•	tipoTransportador: string (pj ou autonomo) - Padrão: pj - Obrigatório
+•	tipoRegistro: string (PF, MEI, PJ)
+•	razaoSocial: string (Razão social (PJ) ou Nome completo (Autônomo)) - Obrigatório
+•	nomeFantasia: string
+•	cnpj: string
+•	cpf: string
+•	rg: string
+•	dataNascimento: date
+•	inscricaoEstadual: string
+•	inscricaoMunicipal: string
+•	regimeTributario: string (Simples, Presumido, Real)
+•	cnae: string
+•	tipoTransporte: string (transportadora, moto, carro, onibus) - Padrão: transportadora
+•	telefoneComercial: string
+•	telefonePessoal: string
+•	endereco: object (cep, logradouro, numero, complemento, bairro, cidade, estado)
+•	cnhNumero: string
+•	cnhCategoria: string
+•	cnhValidade: date
+•	anexoCnh: array de string (URLs)
+•	veiculoPlaca: string
+•	veiculoRenavam: string
+•	veiculoTipo: string (caminhão, caminhonete, vuc, bitrem, carreta, outro)
+•	veiculoCapacidade: string
+•	anexoCrlv: array de string (URLs)
+•	rntrcNumero: string
+•	anexoRntrc: array de string (URLs)
+•	tacNumero: string
+•	anexoTac: array de string (URLs)
+•	certificadoDigitalPossui: boolean - Padrão: false
+•	certificadoTipo: string (A1, A3, sem)
+•	anexoCertificado: string (URL)
+•	responsavelNome: string
+•	responsavelCpf: string
+•	responsavelRg: string
+•	contatoFinanceiro: object (nome, email, telefone)
+•	frotaQuantidade: integer
+•	frotaTipos: string
+•	veiculos: array de objetos (placa, renavam, capacidadeTon, tipo, anexos)
+•	bancoTitular: string
+•	bancoAgencia: string
+•	bancoConta: string
+•	pixChave: string
+•	aceitaSeguro: boolean - Padrão: false
+•	anexoSeguro: array de string (URLs)
+•	seguroRc: string (URL)
+•	seguroPolitica: string
+•	contabilResponsavel: string
+•	contabilEmail: string
+•	condicoesComerciais: object (prazoPagamento, percentualComissao, aceitaAntecipacao)
+•	docsFiscais: array de string (URLs)
+•	logoUrl: string
+•	documentoCnpjScan: string (URL)
+•	documentoAlvara: string (URL)
+•	documentoComprovanteEndereco: string (URL)
+•	servicosOferecidos: array de string
+•	status: string (pending, approved, rejected, blocked) - Padrão: pending
+•	statusVerificacao: string (pendente, validado, rejeitado) - Padrão: pendente
+•	verificacaoData: datetime
+•	validadeDocumentos: date
+•	motivoRejeicao: string
+•	perfilCompleto: boolean - Padrão: false
+•	isPremium: boolean - Padrão: false
+•	avaliacaoMedia: number - Padrão: 0
+•	totalAvaliacoes: integer - Padrão: 0
+•	totalEntregas: integer - Padrão: 0
+•	entregasAtrasoMes: integer - Padrão: 0
+•	entregasAtrasoAno: integer - Padrão: 0
+•	mesReferenciaAtraso: string
+•	anoReferenciaAtraso: string
+•	bloqueadaCotacoes: boolean - Padrão: false
+•	motivoBloqueio: string
+•	multaPendente: number - Padrão: 0
+•	saldoCarteira: number - Padrão: 0
+•	saldoCreditosPedagio: number - Padrão: 0
+•	saldoDescontoPremium: number - Padrão: 0
+•	historicoCarteira: array de object
+•	historicoValoresAMais: array de object
+•	historicoValoresAMenos: array de object
+•	codigoDiario: string
+•	dataCodigoDiario: date
+•	observacoes: string
+•	alteracoesEmAnalise: boolean - Padrão: false
+•	alteracoesPendentes: object
+•	Relacionamentos:
+•	Um para um com User (via userIdGoogle).
+•	Um para muitos com RespostaCotacao (via transportadoraId).
+•	Um para muitos com OpcaoEnvio (via transportadoraId).
+•	Um para muitos com NCMAtendido (via transportadoraId).
+•	Um para muitos com RegiaoAtendida (via transportadoraId).
+•	Um para muitos com Chat (via transportadoraId).
+•	Um para muitos com Financeiro (via transportadoraId).
+•	Um para muitos com AvaliacaoCliente (como transportadoraId).
+•	Um para muitos com AssinaturaPremium (via userId).
+4.	Cotacao:
+•	Descrição: Representa uma solicitação de cotação de frete por um cliente.
+•	Campos:
+•	clienteId: string (ID do cliente) - Obrigatório
+•	produtoId: string (ID do produto principal) - Obrigatório
+•	produtoNome: string
+•	produtoNCM: string
+•	produtoPeso: number
+•	produtoUnidade: string
+•	produtosLista: array de objetos (produtoId, nome, ncmCode, quantidade, valorUnitario, pesoUnitario, unidade) - Padrão: []
+•	destinatarioId: string (ID do destinatário) - Obrigatório
+•	destinatarioCep: string
+•	destinatarioCidade: string
+•	destinatarioEstado: string
+•	enderecoColetaId: string (ID do endereço de coleta selecionado) - Obrigatório
+•	enderecoColetaCep: string
+•	enderecoColetaCidade: string
+•	enderecoColetaEstado: string
+•	ehColetaReversa: boolean - Padrão: false
+•	distanciaKm: number
+•	aceitaMotoCarAte100km: boolean - Padrão: false
+•	aceitaTransportadorSemCNPJ: boolean - Padrão: false
+•	valorNotaFiscal: number - Obrigatório
+•	quantidadeVolumes: integer - Obrigatório
+•	pesoTotal: number - Obrigatório
+•	volumes: array de objetos (largura, altura, comprimento, peso)
+•	tipoFrete: string (CIF, FOB) - Obrigatório
+•	servicosAdicionais: object (precisaPalete, ehUrgente, ehFragil, precisaCargaDedicada, precisaMontagem, precisaInstalacao, precisaEscoltaArmada, precisaArmazenamento, mesesArmazenamento, precisaSeguro, valorSeguro)
+•	tempoCotacaoMinutos: integer - Obrigatório
+•	dataHoraColeta: datetime - Obrigatório
+•	dataHoraInicio: datetime
+•	dataHoraFim: datetime
+•	status: string (aberta, em_andamento, visualizada, aguardando_pagamento, aceita, aguardando_coleta, em_transito, aguardando_aprovacao_cte, aguardando_confirmacao, finalizada, cancelada, contestada, devolvida) - Padrão: aberta
+•	respostaSelecionadaId: string (ID da resposta escolhida pelo cliente)
+•	codigoConfirmacaoColeta: string
+•	coletaConfirmada: boolean - Padrão: false
+•	dataHoraColetaConfirmada: datetime
+•	prazoEntregaDias: integer
+•	dataPrevistaEntrega: datetime
+•	dataNovaPrevisaoEntrega: datetime
+•	motivoAtraso: string
+•	atrasada: boolean - Padrão: false
+•	dataInicioAtraso: datetime
+•	atrasoInformadoCliente: boolean - Padrão: false
+•	urlRastreamento: string
+•	codigoRastreio: string
+•	codigoCTe: string
+•	cteRegistrado: boolean - Padrão: false
+•	dataHoraCTeRegistrado: datetime
+•	motivoAumentoCTe: string
+•	cteAprovadoCliente: boolean - Padrão: false
+•	cteRejeitadoCliente: boolean - Padrão: false
+•	dataHoraAprovacaoCTe: datetime
+•	documentoCte: string (URL)
+•	documentoTem: string (URL)
+•	documentoComprovanteDescarga: string (URL)
+•	documentoCanhoto: string (URL)
+•	cteConfirmadoCliente: boolean - Padrão: false
+•	codigoCIOT: string
+•	ciotRegistrado: boolean - Padrão: false
+•	dataHoraCIOTRegistrado: datetime
+•	documentoCiot: string (URL)
+•	documentoCiotXml: string (URL)
+•	valorCiot: number
+•	codigoMDFe: string
+•	mdfeRegistrado: boolean - Padrão: false
+•	dataHoraMDFeRegistrado: datetime
+•	documentoMdfe: string (URL)
+•	documentoMdfeXml: string (URL)
+•	ehGranelNcm: boolean - Padrão: false
+•	pesoDescarga: number
+•	primeiraVisualizacao: datetime
+•	avaliada: boolean - Padrão: false
+•	valorOriginalCotacao: number
+•	taxaPlataforma: number - Padrão: 0
+•	statusPagamento: string (nao_requerido, pendente, processando, pago, falhou) - Padrão: nao_requerido
+•	valorPago: number
+•	dataPagamento: datetime
+•	metodoPagamento: string (creditos, cartao_credito, cartao_debito, pix, boleto, infinity_pay)
+•	pagamentoId: string (ID do registro de pagamento)
+•	documentosEntrega: array de string (URLs) - Padrão: []
+•	valorFinalTransportadora: number
+•	valorFinalCliente: number
+•	entregaProdutosMaisTransportadora: boolean - Padrão: false
+•	entregaProdutosMaisCliente: boolean - Padrão: false
+•	observacoesTransportadora: string
+•	observacoesCliente: string
+•	dataHoraComprovanteEnviado: datetime
+•	dataHoraFinalizacao: datetime
+•	avaliacaoTransportadoraId: string
+•	avaliacaoClienteId: string
+•	contestacao: object (contestada, motivo, dataHora)
+•	valorFinalApurado: number
+•	valorComissao: number
+•	diferencaValor: number
+•	boletoGerado: boolean - Padrão: false
+•	observacoes: string
+•	Relacionamentos:
+•	Muitos para um com PerfilCliente (via clienteId).
+•	Um para muitos com RespostaCotacao (via cotacaoId).
+•	Um para muitos com Chat (via cotacaoId).
+•	Muitos para um com Produto (via produtoId).
+•	Muitos para um com Destinatario (via destinatarioId).
+•	Muitos para um com EnderecoColeta (via enderecoColetaId).
+•	Muitos para um com Pagamento (via pagamentoId - opcional).
+•	Um para um com Avaliacao (via avaliacaoTransportadoraId - opcional).
+•	Um para um com AvaliacaoCliente (via avaliacaoClienteId - opcional).
+•	Muitos para muitos com CotacaoFavorita.
+5.	RespostaCotacao:
+•	Descrição: Resposta de uma transportadora a uma cotação.
+•	Campos:
+•	cotacaoId: string (ID da cotação) - Obrigatório
+•	transportadoraId: string (ID da transportadora) - Obrigatório
+•	transportadoraNome: string
+•	transportadoraLogo: string
+•	isPremium: boolean - Padrão: false
+•	opcaoEnvioId: string (ID da opção de envio) - Obrigatório
+•	opcaoEnvioNome: string
+•	valorBase: number - Obrigatório
+•	valorPalete: number - Padrão: 0
+•	valorUrgente: number - Padrão: 0
+•	valorFragil: number - Padrão: 0
+•	valorCargaDedicada: number - Padrão: 0
+•	seguroCargaId: string (ID do seguro de carga selecionado)
+•	seguradora: string
+•	tipoCobertura: string
+•	valorSeguro: number - Padrão: 0
+•	valorTotal: number - Obrigatório
+•	tempoEntregaDias: integer - Obrigatório
+•	observacoes: string
+•	dataHoraResposta: datetime
+•	Relacionamentos:
+•	Muitos para um com Cotacao (via cotacaoId).
+•	Muitos para um com PerfilTransportadora (via transportadoraId).
+•	Muitos para um com OpcaoEnvio (via opcaoEnvioId).
+•	Muitos para um com SeguroCarga (via seguroCargaId - opcional).
+Entidades de Suporte:
+6.	Produto:
+•	Descrição: Detalhes de um produto que será transportado.
+•	Campos:
+•	nome: string (Nome do produto em maiúsculas) - Obrigatório
+•	ncmCode: string (Código NCM do produto) - Obrigatório
+•	ncmClassificacao: string
+•	unidadeMedida: string (kg, ton, litro, m3, unidade, saca, palete, container, granel) - Padrão: kg
+•	pesoKg: number - Obrigatório
+•	larguraM: number - Obrigatório
+•	alturaM: number - Obrigatório
+•	comprimentoM: number - Obrigatório
+•	valorUnitario: number - Padrão: 0
+•	flags: array de string (fragil, quimico, liquido, granel, delicado, perecivel, refrigerado, congelado, inflamavel, corrosivo, toxico, explosivo, radioativo, biologico, volumoso, pesado, empilhavel, nao_empilhavel, requer_cuidado, alto_valor) - Padrão: []
+•	observacoes: string
+•	clienteId: string (ID do cliente que criou o produto)
+•	Relacionamentos:
+•	Muitos para um com PerfilCliente (via clienteId).
+•	Muitos para um com NCM (via ncmCode).
+7.	Destinatario:
+•	Descrição: Informações do destinatário da carga.
+•	Campos:
+•	nomeCompleto: string (Nome completo em maiúsculas) - Obrigatório
+•	cep: string - Obrigatório
+•	logradouro: string - Obrigatório
+•	numero: string - Obrigatório
+•	complemento: string
+•	bairro: string - Obrigatório
+•	cidade: string - Obrigatório
+•	estado: string - Obrigatório
+•	pais: string - Padrão: Brasil
+•	latitude: number
+•	longitude: number
+•	aceitaMotoCarAte100km: boolean - Padrão: false
+•	clienteId: string (ID do cliente que criou o destinatário) - Obrigatório
+•	Relacionamentos:
+•	Muitos para um com PerfilCliente (via clienteId).
+8.	EnderecoColeta:
+•	Descrição: Endereços de coleta de cargas.
+•	Campos:
+•	clienteId: string (ID do usuário dono do endereço) - Obrigatório
+•	apelido: string
+•	cep: string - Obrigatório
+•	logradouro: string - Obrigatório
+•	numero: string - Obrigatório
+•	complemento: string
+•	bairro: string - Obrigatório
+•	cidade: string - Obrigatório
+•	estado: string - Obrigatório
+•	latitude: number
+•	longitude: number
+•	principal: boolean - Padrão: false
+•	termoAceito: boolean
+•	dataTermoAceito: datetime
+•	ativo: boolean - Padrão: true
+•	Relacionamentos:
+•	Muitos para um com PerfilCliente (via clienteId).
+9.	NCM:
+•	Descrição: Classificação fiscal de produtos (Nomenclatura Comum do Mercosul).
+•	Campos:
+•	code: string (Código NCM) - Obrigatório
+•	name: string (Nome do produto) - Obrigatório
+•	classification: string (Classificação) - Obrigatório
+•	Relacionamentos:
+•	Um para muitos com Produto (via ncmCode).
+•	Um para muitos com NCMAtendido (via ncmCode).
+10.	OpcaoEnvio:
+•	Descrição: Opções de envio oferecidas por uma transportadora.
+•	Campos:
+•	transportadoraId: string (ID da transportadora) - Obrigatório
+•	nome: string (Aéreo, Marítimo, Terrestre, Dedicado, Outro) - Obrigatório
+•	descricao: string
+•	Relacionamentos:
+•	Muitos para um com PerfilTransportadora (via transportadoraId).
+11.	NCMAtendido:
+•	Descrição: Lista de NCMs que uma transportadora atende.
+•	Campos:
+•	transportadoraId: string (ID da transportadora) - Obrigatório
+•	ncmCode: string (Código NCM atendido) - Obrigatório
+•	Relacionamentos:
+•	Muitos para um com PerfilTransportadora (via transportadoraId).
+•	Muitos para um com NCM (via ncmCode).
+12.	RegiaoAtendida:
+•	Descrição: Regiões geográficas que uma transportadora atende.
+•	Campos:
+•	transportadoraId: string (ID da transportadora) - Obrigatório
+•	cepInicio: string
+•	cepFim: string
+•	estados: array de string
+•	Relacionamentos:
+•	Muitos para um com PerfilTransportadora (via transportadoraId).
+13.	Credencial:
+•	Descrição: Credenciais de acesso de um usuário ao sistema (usado para múltiplos perfis sob um mesmo login Google).
+•	Campos:
+•	userId: string (ID do usuário Google da base44) - Obrigatório
+•	emailGoogle: string (Email da conta Google) - Obrigatório
+•	tipo: string (cliente, transportadora) - Obrigatório
+•	emailAcesso: string (Email para login no sistema) - Obrigatório
+•	senhaHash: string (Senha criptografada) - Obrigatório
+•	ativo: boolean - Padrão: true
+•	perfilId: string (ID do perfil associado, seja PerfilCliente ou PerfilTransportadora)
+•	Relacionamentos:
+•	Muitos para um com User (via userId).
+•	Referencia PerfilCliente ou PerfilTransportadora (via perfilId).
+14.	Chat:
+•	Descrição: Registra as conversas entre clientes e transportadoras.
+•	Campos:
+•	cotacaoId: string (ID da cotação) - Obrigatório
+•	clienteId: string (ID do cliente) - Obrigatório
+•	transportadoraId: string (ID da transportadora) - Obrigatório
+•	tipo: string (normal, negociacao_cte) - Padrão: normal
+•	status: string (ativo, bloqueado, expirado, aguardando_cliente, aguardando_transportadora, aprovado, rejeitado_final) - Padrão: ativo
+•	tentativasNegociacao: integer (Máx 2) - Padrão: 0
+•	valorOriginalCotacao: number
+•	valorAtualProposta: number
+•	motivoUltimaRejeicao: string
+•	dataHoraInicio: datetime - Obrigatório
+•	dataHoraExpiracao: datetime - Obrigatório
+•	dataHoraUltimaMensagem: datetime
+•	lidoPorTransportadora: boolean - Padrão: true
+•	lidoPorCliente: boolean - Padrão: true
+•	mensagens: array de objetos (remetente, mensagem, tipoMensagem, valorProposto, motivoRejeicao, dataHora) - Padrão: []
+•	Relacionamentos:
+•	Muitos para um com Cotacao (via cotacaoId).
+•	Muitos para um com PerfilCliente (via clienteId).
+•	Muitos para um com PerfilTransportadora (via transportadoraId).
+15.	SeguroCarga:
+•	Descrição: Detalhes de seguros de carga disponíveis.
+•	Campos:
+•	seguradora: string - Obrigatório
+•	tipoCobertura: string (basica, intermediaria, completa, premium) - Obrigatório
+•	valorCobertura: number - Obrigatório
+•	valorSeguro: number - Obrigatório
+•	percentualNCM: number
+•	ncmsAplicaveis: array de string - Padrão: []
+•	descricao: string
+•	ativo: boolean - Padrão: true
+•	Relacionamentos:
+•	Um para muitos com RespostaCotacao (via seguroCargaId - opcional).
+16.	Avaliacao:
+•	Descrição: Avaliação de uma transportadora por um cliente.
+•	Campos:
+•	cotacaoId: string (ID da cotação avaliada) - Obrigatório
+•	clienteId: string (ID do cliente que avaliou) - Obrigatório
+•	transportadoraId: string (ID da transportadora avaliada) - Obrigatório
+•	nota: integer (1 a 5 estrelas) - Obrigatório
+•	comentario: string
+•	dataAvaliacao: datetime
+•	Relacionamentos:
+•	Muitos para um com Cotacao (via cotacaoId).
+•	Muitos para um com PerfilCliente (via clienteId).
+•	Muitos para um com PerfilTransportadora (via transportadoraId).
+17.	AvaliacaoCliente:
+•	Descrição: Avaliação de um cliente por uma transportadora.
+•	Campos:
+•	cotacaoId: string (ID da cotação avaliada) - Obrigatório
+•	transportadoraId: string (ID da transportadora que avalia) - Obrigatório
+•	clienteId: string (ID do cliente avaliado) - Obrigatório
+•	nota: integer (0 a 5 estrelas) - Obrigatório
+•	comentario: string
+•	dataAvaliacao: datetime
+•	Relacionamentos:
+•	Muitos para um com Cotacao (via cotacaoId).
+•	Muitos para um com PerfilTransportadora (via transportadoraId).
+•	Muitos para um com PerfilCliente (via clienteId).
+18.	Financeiro:
+•	Descrição: Registro financeiro mensal de uma transportadora.
+•	Campos:
+•	transportadoraId: string (ID da transportadora) - Obrigatório
+•	transportadoraNome: string
+•	mesReferencia: string (YYYY-MM) - Obrigatório
+•	cotacoes: array de objetos (cotacaoId, numeroCotacao, valorCotacao, valorTransportadora, valorComissao, dataFinalizacao) - Padrão: []
+•	valorTotalCotacoes: number - Padrão: 0
+•	valorTotalTransportadora: number - Padrão: 0
+•	valorTotalComissao: number - Padrão: 0
+•	boletoGerado: boolean - Padrão: false
+•	dataBoletoGerado: datetime
+•	boletoPago: boolean - Padrão: false
+•	dataBoletoPago: datetime
+•	notaEmitida: boolean - Padrão: false
+•	dataNotaEmitida: datetime
+•	statusPagamento: string (pendente, liberado, pago) - Padrão: pendente
+•	Relacionamentos:
+•	Muitos para um com PerfilTransportadora (via transportadoraId).
+•	Muitos para muitos com Cotacao (via cotacoes array de objetos).
+19.	Pagamento:
+•	Descrição: Registra os pagamentos realizados por clientes.
+•	Campos:
+•	clienteId: string (ID do cliente que fez o pagamento) - Obrigatório
+•	cotacaoId: string (ID da cotação relacionada - se aplicável)
+•	tipo: string (cotacao, creditos, premium) - Obrigatório
+•	valor: number - Obrigatório
+•	metodo: string (creditos, cartao_credito, cartao_debito, pix, boleto, infinity_pay) - Obrigatório
+•	status: string (pendente, processando, aprovado, rejeitado, cancelado, estornado) - Padrão: pendente
+•	transacaoId: string
+•	gateway: string
+•	dataHoraPagamento: datetime
+•	dataHoraAprovacao: datetime
+•	comprovante: string (URL)
+•	observacoes: string
+•	dadosAdicionais: object
+•	Relacionamentos:
+•	Muitos para um com PerfilCliente (via clienteId).
+•	Muitos para um com Cotacao (via cotacaoId - opcional).
+•	Muitos para um com AssinaturaPremium (implícito, para pagamentos tipo 'premium').
+20.	PacotePremium:
+•	Descrição: Define os diferentes pacotes premium disponíveis para clientes e transportadoras.
+•	Campos:
+•	tipo: string (cliente, transportadora) - Obrigatório
+•	nome: string - Obrigatório
+•	nivel: integer (1-5) - Obrigatório
+•	valor: number - Obrigatório
+•	comissao: number (apenas transportadora)
+•	beneficioDesconto: number (apenas cliente)
+•	cancelamentosMes: integer
+•	entregasSemMulta: integer (apenas transportadora)
+•	diasDestaque: integer (apenas transportadora)
+•	cashbackPorcentagem: number - Padrão: 10
+•	ativo: boolean - Padrão: true
+•	Relacionamentos:
+•	Um para muitos com AssinaturaPremium (via pacoteId).
+21.	AssinaturaPremium:
+•	Descrição: Registra as assinaturas premium ativas de usuários.
+•	Campos:
+•	userId: string (ID do usuário - perfilAtivoId) - Obrigatório
+•	tipo: string (cliente, transportadora) - Obrigatório
+•	pacoteId: string (ID do pacote premium adquirido) - Obrigatório
+•	pacoteNome: string
+•	pacoteNivel: integer
+•	valorPago: number - Obrigatório
+•	valorDescontoCashback: number - Padrão: 0
+•	dataInicio: datetime - Obrigatório
+•	dataFim: datetime - Obrigatório
+•	ativa: boolean - Padrão: true
+•	cancelamentosMesAtual: integer - Padrão: 0
+•	entregasSemMultaMesAtual: integer - Padrão: 0
+•	descontosUtilizados: number - Padrão: 0
+•	mesReferencia: string (YYYY-MM)
+•	diasDestaqueRestantes: integer - Padrão: 0
+•	Relacionamentos:
+•	Muitos para um com PacotePremium (via pacoteId).
+•	Muitos para um com PerfilCliente ou PerfilTransportadora (via userId).
+Entidades Auxiliares (Não instanciadas no snapshot, mas definidas):
+22.	SolicitacaoMudancaTipo:
+•	Descrição: Registro de solicitações de mudança de tipo de perfil (por exemplo, de PJ para autônomo).
+•	Campos:
+•	perfilId: string (ID do perfil solicitante) - Obrigatório
+•	tipoOriginal: string (pj, autonomo) - Obrigatório
+•	tipoDesejado: string (pj, autonomo) - Obrigatório
+•	motivo: string - Obrigatório
+•	dataSolicitacao: datetime
+•	status: string (pendente, aprovada, rejeitada) - Padrão: pendente
+•	documentosAnexos: array de string (URLs)
+•	Relacionamentos:
+•	Muitos para um com PerfilTransportadora (via perfilId).
+23.	CotacaoFavorita:
+•	Descrição: Permite que transportadoras salvem cotações como favoritas.
+•	Campos:
+•	transportadoraId: string (ID da transportadora) - Obrigatório
+•	cotacaoId: string (ID da cotação) - Obrigatório
+•	dataFavoritada: datetime
+•	Relacionamentos:
+•	Muitos para um com PerfilTransportadora (via transportadoraId).
+•	Muitos para um com Cotacao (via cotacaoId).
+24.	AcessoTemporario:
+•	Descrição: Gerencia acessos temporários para usuários específicos.
+•	Campos:
+•	email: string - Obrigatório
+•	token: string (Token de acesso) - Obrigatório
+•	dataExpiracao: datetime - Obrigatório
+•	tipoAcesso: string (admin, cliente, transportadora) - Obrigatório
+•	status: string (ativo, expirado, usado) - Padrão: ativo
+•	Relacionamentos: N/A
+25.	HistoricoAtraso:
+•	Descrição: Histórico detalhado de atrasos em entregas para uma transportadora.
+•	Campos:
+•	transportadoraId: string (ID da transportadora) - Obrigatório
+•	cotacaoId: string (ID da cotação atrasada) - Obrigatório
+•	dataPrevistaOriginal: datetime - Obrigatório
+•	dataEntregaRealizada: datetime - Obrigatório
+•	diasAtraso: integer - Obrigatório
+•	motivo: string
+•	multaAplicada: number
+•	Relacionamentos:
+•	Muitos para um com PerfilTransportadora (via transportadoraId).
+•	Muitos para um com Cotacao (via cotacaoId).

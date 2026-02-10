@@ -1,0 +1,8 @@
+
+> acheimeufrete-backend@1.0.0 start
+> node src/server.js
+
+🚀 Servidor rodando em http://localhost:5000
+📝 API em http://localhost:5000/api
+✅ CORS habilitado para http://localhost:5173
+Terminated

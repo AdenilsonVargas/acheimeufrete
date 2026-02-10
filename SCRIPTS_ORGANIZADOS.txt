@@ -1,0 +1,144 @@
+╔══════════════════════════════════════════════════════════════╗
+║         ORGANIZAÇÃO DE SCRIPTS - Achei Meu Frete            ║
+║                   20 de Janeiro de 2026                      ║
+╚══════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 RESUMO DA LIMPEZA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Antes: 15 arquivos .sh
+Depois: 8 arquivos .sh
+Removidos: 7 arquivos duplicados/obsoletos (47% de redução)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ SCRIPTS MANTIDOS (8 arquivos)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 GERENCIAMENTO DO SISTEMA:
+
+1. START.sh (16KB) - ⭐ PRINCIPAL
+   • Inicia todos os serviços (PostgreSQL, Backend, Frontend)
+   • Valida portas livres
+   • Testa conectividade
+   • Mostra informações de acesso
+   Uso: ./START.sh
+
+2. STOP.sh (8KB) - ⭐ PRINCIPAL
+   • Para todos os serviços
+   • Limpa processos órfãos
+   • Valida que tudo parou
+   Uso: ./STOP.sh
+
+3. STATUS.sh (9.5KB)
+   • Verifica status de todos os serviços
+   • Mostra portas em uso
+   • Exibe processos ativos
+   Uso: ./STATUS.sh
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🧪 SCRIPTS DE TESTE:
+
+4. run-all-tests.sh (3.6KB)
+   • Executa todos os testes do sistema
+   Uso: ./run-all-tests.sh
+
+5. test-cotacao-e2e.sh (3.8KB)
+   • Testes end-to-end de cotações
+   Uso: ./test-cotacao-e2e.sh
+
+6. test-ncm-implementacao.sh (5.1KB)
+   • Testa implementação do sistema NCM
+   Uso: ./test-ncm-implementacao.sh
+
+7. test-ncm-performance.sh (9.7KB)
+   • Testes de performance do sistema NCM
+   Uso: ./test-ncm-performance.sh
+
+8. test-rotas.sh (1.4KB)
+   • Testa rotas da API
+   Uso: ./test-rotas.sh
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🗑️  SCRIPTS REMOVIDOS (7 arquivos)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Duplicados:
+  ✗ INICIAR.sh - Substituído por START.sh (mais completo)
+  ✗ PARAR.sh - Substituído por STOP.sh (mais completo)
+  ✗ START_ALL.sh - Versão antiga do START.sh
+
+Obsoletos:
+  ✗ init.sh - Script de inicialização antigo
+  ✗ APLICAR_LAYOUT_GUIA.sh - Script de layout obsoleto
+  ✗ check-codespaces.sh - Verificação antiga do Codespaces
+  ✗ verify.sh - Script de verificação obsoleto
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📖 GUIA DE USO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Uso Diário:
+
+  # Iniciar sistema
+  ./START.sh
+
+  # Verificar status
+  ./STATUS.sh
+
+  # Parar sistema
+  ./STOP.sh
+
+Testes:
+
+  # Todos os testes
+  ./run-all-tests.sh
+
+  # Testes específicos
+  ./test-cotacao-e2e.sh
+  ./test-ncm-implementacao.sh
+  ./test-ncm-performance.sh
+  ./test-rotas.sh
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ BENEFÍCIOS DA ORGANIZAÇÃO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Simplicidade
+   - Menos arquivos para gerenciar
+   - Nomes claros e objetivos
+   - Sem duplicação
+
+2. Manutenção
+   - Scripts consolidados
+   - Versões mais recentes mantidas
+   - Fácil de atualizar
+
+3. Clareza
+   - START.sh e STOP.sh são autoexplicativos
+   - STATUS.sh para verificação
+   - Scripts de teste organizados
+
+4. Performance
+   - Scripts otimizados
+   - Menos arquivos no repositório
+   - Git mais rápido
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 ESTRUTURA FINAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+/workspaces/acheimeufrete/
+├── START.sh                    ⭐ Iniciar sistema
+├── STOP.sh                     ⭐ Parar sistema
+├── STATUS.sh                   📊 Verificar status
+├── run-all-tests.sh           🧪 Todos os testes
+├── test-cotacao-e2e.sh        🧪 Teste de cotações
+├── test-ncm-implementacao.sh  🧪 Teste de NCM
+├── test-ncm-performance.sh    🧪 Performance NCM
+└── test-rotas.sh              🧪 Teste de rotas
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Scripts organizados e prontos para uso! 🎉

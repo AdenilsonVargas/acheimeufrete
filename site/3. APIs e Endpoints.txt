@@ -1,0 +1,178 @@
+3. APIs e Endpoints
+
+Arquitetura da API do Aplicativo
+A plataforma Base44 fornece automaticamente endpoints RESTful para cada entidade definida, além de endpoints específicos para autenticação e integrações.
+1. Endpoints de Entidades (CRUD Automático)
+Para cada entidade do seu aplicativo (ex: Cotacao, PerfilCliente, Produto, etc.), a plataforma Base44 expõe os seguintes padrões de endpoints REST:
+•	Listar/Filtrar Entidades
+•	Rota: GET /entities/{entityName}
+•	Parâmetros Esperados (Query String):
+•	query: JSON string para filtrar entidades (ex: {"status": "aberta"} ou {"clienteId": "id_do_cliente"}). Suporta operadores como $gte, $lte, $in.
+•	sort: JSON string para ordenar resultados (ex: {"created_date": -1} para ordem decrescente).
+•	limit: integer para o número máximo de resultados.
+•	skip: integer para pular resultados (para paginação).
+•	Respostas Retornadas:
+•	200 OK: array de objetos da entidade correspondente.
+•	401 Unauthorized: Se o usuário não estiver autenticado ou não tiver permissão de leitura.
+•	403 Forbidden: Se o usuário não tiver autorização para acessar esta entidade ou filtro específico.
+•	500 Internal Server Error: Erro interno no servidor.
+•	Exemplo de Uso (SDK): base44.entities.Cotacao.filter({clienteId: "someId"}, '-created_date', 10)
+•	Obter uma Entidade por ID
+•	Rota: GET /entities/{entityName}/{id}
+•	Parâmetros Esperados:
+•	id: string (ID da entidade no caminho da URL).
+•	Respostas Retornadas:
+•	200 OK: Objeto da entidade correspondente.
+•	404 Not Found: Se a entidade com o ID especificado não for encontrada.
+•	401 Unauthorized: Se o usuário não estiver autenticado ou não tiver permissão de leitura.
+•	403 Forbidden: Se o usuário não tiver autorização para acessar esta entidade.
+•	500 Internal Server Error: Erro interno no servidor.
+•	Exemplo de Uso (SDK): base44.entities.Cotacao.get("someCotacaoId")
+•	Criar uma Entidade
+•	Rota: POST /entities/{entityName}
+•	Parâmetros Esperados (Corpo da Requisição - JSON):
+•	Um objeto JSON contendo os dados da nova entidade, conforme o schema da entidade (ignorando id, created_date, updated_date, created_by).
+•	Respostas Retornadas:
+•	201 Created: Objeto da entidade criada, incluindo o id gerado e metadados.
+•	400 Bad Request: Se o corpo da requisição for inválido ou faltarem campos obrigatórios.
+•	401 Unauthorized: Se o usuário não estiver autenticado.
+•	403 Forbidden: Se o usuário não tiver autorização para criar entidades deste tipo.
+•	500 Internal Server Error: Erro interno no servidor.
+•	Exemplo de Uso (SDK): base44.entities.Cotacao.create({clienteId: "id", produtoId: "id", ...})
+•	Atualizar uma Entidade
+•	Rota: PUT /entities/{entityName}/{id}
+•	Parâmetros Esperados:
+•	id: string (ID da entidade no caminho da URL).
+•	Corpo da Requisição (JSON): Objeto JSON com os campos a serem atualizados.
+•	Respostas Retornadas:
+•	200 OK: Objeto da entidade atualizada.
+•	400 Bad Request: Se o corpo da requisição for inválido.
+•	404 Not Found: Se a entidade com o ID especificado não for encontrada.
+•	401 Unauthorized: Se o usuário não estiver autenticado.
+•	403 Forbidden: Se o usuário não tiver autorização para atualizar esta entidade.
+•	500 Internal Server Error: Erro interno no servidor.
+•	Exemplo de Uso (SDK): base44.entities.Cotacao.update("someCotacaoId", {status: "finalizada"})
+•	Excluir uma Entidade
+•	Rota: DELETE /entities/{entityName}/{id}
+•	Parâmetros Esperados:
+•	id: string (ID da entidade no caminho da URL).
+•	Respostas Retornadas:
+•	204 No Content: Se a entidade foi excluída com sucesso.
+•	404 Not Found: Se a entidade com o ID especificado não for encontrada.
+•	401 Unauthorized: Se o usuário não estiver autenticado.
+•	403 Forbidden: Se o usuário não tiver autorização para excluir esta entidade.
+•	500 Internal Server Error: Erro interno no servidor.
+•	Exemplo de Uso (SDK): base44.entities.Cotacao.delete("someCotacaoId")
+2. Endpoints de Autenticação
+A Base44 gerencia a autenticação do usuário. Os seguintes métodos do SDK base44.auth implicam endpoints correspondentes:
+•	Obter Dados do Usuário Logado
+•	Rota: GET /auth/me (inferido)
+•	Parâmetros Esperados: Nenhum.
+•	Respostas Retornadas:
+•	200 OK: Objeto User com os dados do usuário logado.
+•	401 Unauthorized: Se o usuário não estiver logado.
+•	Autenticação: Requer um token de sessão válido.
+•	Exemplo de Uso (SDK): base44.auth.me()
+•	Atualizar Dados do Usuário Logado
+•	Rota: PUT /auth/me (inferido)
+•	Parâmetros Esperados (Corpo da Requisição - JSON):
+•	Um objeto JSON contendo os campos do User a serem atualizados (exceto id, email, full_name, role).
+•	Respostas Retornadas:
+•	200 OK: Objeto User atualizado.
+•	400 Bad Request: Se o corpo da requisição for inválido.
+•	401 Unauthorized: Se o usuário não estiver logado.
+•	Autenticação: Requer um token de sessão válido.
+•	Exemplo de Uso (SDK): base44.auth.updateMe({ fotoPerfil: "url" })
+•	Logout
+•	Rota: POST /auth/logout (inferido)
+•	Parâmetros Esperados: Nenhum.
+•	Respostas Retornadas:
+•	200 OK: Indica sucesso no logout.
+•	Autenticação: Requer um token de sessão válido (para invalidá-lo).
+•	Exemplo de Uso (SDK): base44.auth.logout()
+•	Convidar Usuário (Gerenciamento de Usuários)
+•	Rota: POST /users/invite (inferido)
+•	Parâmetros Esperados (Corpo da Requisição - JSON):
+•	email: string (e-mail do usuário a ser convidado).
+•	role: string (user ou admin).
+•	Respostas Retornadas:
+•	200 OK: Indica que o convite foi enviado.
+•	400 Bad Request: Se o e-mail ou role forem inválidos.
+•	401 Unauthorized: Se o usuário não estiver logado.
+•	403 Forbidden: Se o usuário não tiver permissão de admin.
+•	Autenticação: Requer um token de sessão válido.
+•	Autorização: Apenas usuários com role: "admin" podem usar este endpoint.
+•	Exemplo de Uso (SDK): base44.users.inviteUser("foo@gmail.com", "user")
+3. Endpoints de Integrações (Core)
+A Base44 oferece endpoints para integrações, como o Core para funcionalidades básicas de IA e arquivo. Os detalhes são definidos nas descrições das ferramentas de integração.
+•	Invocar LLM (InvokeLLM)
+•	Rota: POST /integrations/Core/InvokeLLM (inferido)
+•	Parâmetros Esperados (Corpo da Requisição - JSON):
+•	prompt: string (prompt para o LLM) - Obrigatório
+•	add_context_from_internet: boolean
+•	response_json_schema: object (schema JSON esperado para a resposta)
+•	file_urls: array de string (URLs de arquivos para contexto visual/documental)
+•	Respostas Retornadas:
+•	200 OK: string ou object (dependendo de response_json_schema).
+•	400 Bad Request: Se o prompt estiver faltando.
+•	Autenticação: Requer um token de sessão válido.
+•	Exemplo de Uso (SDK): base44.integrations.Core.InvokeLLM({...})
+•	Enviar E-mail (SendEmail)
+•	Rota: POST /integrations/Core/SendEmail (inferido)
+•	Parâmetros Esperados (Corpo da Requisição - JSON):
+•	to: string (endereço de e-mail do destinatário) - Obrigatório
+•	subject: string (assunto do e-mail) - Obrigatório
+•	body: string (corpo do e-mail) - Obrigatório
+•	from_name: string (nome do remetente opcional)
+•	Respostas Retornadas:
+•	200 OK: Confirmação de envio.
+•	400 Bad Request: Se faltarem parâmetros obrigatórios.
+•	Autenticação: Requer um token de sessão válido.
+•	Exemplo de Uso (SDK): base44.integrations.Core.SendEmail({...})
+•	Upload de Arquivo Público (UploadFile)
+•	Rota: POST /integrations/Core/UploadFile (inferido)
+•	Parâmetros Esperados (Multipart Form Data):
+•	file: binary (o arquivo a ser enviado) - Obrigatório
+•	Respostas Retornadas:
+•	200 OK: {"file_url": "string"}
+•	400 Bad Request: Se nenhum arquivo for fornecido.
+•	Autenticação: Requer um token de sessão válido.
+•	Exemplo de Uso (SDK): base44.integrations.Core.UploadFile({file: fileObject})
+•	Upload de Arquivo Privado (UploadPrivateFile)
+•	Rota: POST /integrations/Core/UploadPrivateFile (inferido)
+•	Parâmetros Esperados (Multipart Form Data):
+•	file: binary (o arquivo a ser enviado) - Obrigatório
+•	Respostas Retornadas:
+•	200 OK: {"file_uri": "string"} (URI para acesso privado)
+•	400 Bad Request: Se nenhum arquivo for fornecido.
+•	Autenticação: Requer um token de sessão válido.
+•	Exemplo de Uso (SDK): base44.integrations.Core.UploadPrivateFile({file: fileObject})
+•	Criar URL Assinada para Arquivo Privado (CreateFileSignedUrl)
+•	Rota: POST /integrations/Core/CreateFileSignedUrl (inferido)
+•	Parâmetros Esperados (Corpo da Requisição - JSON):
+•	file_uri: string (URI do arquivo privado obtida de UploadPrivateFile) - Obrigatório
+•	expires_in: integer (tempo em segundos para expiração da URL) - Padrão: 300
+•	Respostas Retornadas:
+•	200 OK: {"signed_url": "string"}
+•	400 Bad Request: Se file_uri estiver faltando.
+•	Autenticação: Requer um token de sessão válido.
+•	Exemplo de Uso (SDK): base44.integrations.Core.CreateFileSignedUrl({file_uri: "someUri"})
+•	Extrair Dados de Arquivo Uploaded (ExtractDataFromUploadedFile)
+•	Rota: POST /integrations/Core/ExtractDataFromUploadedFile (inferido)
+•	Parâmetros Esperados (Corpo da Requisição - JSON):
+•	file_url: string (URL do arquivo uploaded publicamente) - Obrigatório
+•	json_schema: object (schema JSON para a estrutura de dados a ser extraída) - Obrigatório
+•	Respostas Retornadas:
+•	200 OK: {"status": "success" | "error", "details": "string", "output": object | array}
+•	400 Bad Request: Se file_url ou json_schema estiverem faltando.
+•	Autenticação: Requer um token de sessão válido.
+•	Exemplo de Uso (SDK): base44.integrations.Core.ExtractDataFromUploadedFile({...})
+4. Autenticação e Autorização
+•	Autenticação (Platform-managed): A autenticação é totalmente gerenciada pela plataforma Base44. Os usuários precisam estar logados para acessar a maioria dos endpoints. Isso é tipicamente feito via tokens de sessão ou JWTs, que são automaticamente incluídos nas requisições feitas pelo SDK. O base44.auth.isAuthenticated() pode ser usado para verificar o status de login.
+•	Autorização (Baseado em Roles e Entidades):
+•	Roles: O sistema usa roles (admin, user) para controle de acesso básico. O campo role na entidade User define se um usuário tem privilégios administrativos.
+•	Regras de Segurança de Entidade: A Base44 impõe regras de segurança nas entidades. Por exemplo:
+•	Ações CRUD em entidades específicas (PerfilCliente, PerfilTransportadora) são geralmente restritas ao proprietário do perfil (ou a um administrador).
+•	User entity: Apenas administradores podem listar, atualizar ou excluir outros usuários. Usuários comuns só podem ver e atualizar seu próprio registro.
+•	Listagem e filtragem de entidades (Cotacao, Chat, RespostaCotacao) são restritas aos registros onde o usuário logado é o clienteId ou transportadoraId correspondente, ou se for um admin.
+•	Regras de Negócio Específicas: Conforme documentado anteriormente, certas ações são permitidas apenas para tipos específicos de usuário (tipoTransportador: "autonomo" para EmitirCIOT).

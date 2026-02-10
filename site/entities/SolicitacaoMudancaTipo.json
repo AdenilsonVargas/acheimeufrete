@@ -1,0 +1,77 @@
+{
+  "name": "SolicitacaoMudancaTipo",
+  "type": "object",
+  "properties": {
+    "userId": {
+      "type": "string",
+      "description": "ID do usu\u00e1rio solicitante"
+    },
+    "perfilId": {
+      "type": "string",
+      "description": "ID do perfil (PerfilCliente)"
+    },
+    "tipoAtual": {
+      "type": "string",
+      "enum": [
+        "CPF",
+        "CNPJ"
+      ],
+      "description": "Tipo atual da conta"
+    },
+    "tipoDesejado": {
+      "type": "string",
+      "enum": [
+        "CPF",
+        "CNPJ"
+      ],
+      "description": "Tipo desejado ap\u00f3s mudan\u00e7a"
+    },
+    "motivo": {
+      "type": "string",
+      "description": "Motivo da solicita\u00e7\u00e3o de mudan\u00e7a"
+    },
+    "documentoNovo": {
+      "type": "string",
+      "description": "URL do novo documento (CPF ou CNPJ)"
+    },
+    "documentoComprovanteEndereco": {
+      "type": "string",
+      "description": "URL do comprovante de endere\u00e7o"
+    },
+    "documentosAdicionais": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "URLs de documentos adicionais"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pendente",
+        "aprovado",
+        "rejeitado"
+      ],
+      "default": "pendente",
+      "description": "Status da solicita\u00e7\u00e3o"
+    },
+    "motivoRejeicao": {
+      "type": "string",
+      "description": "Motivo da rejei\u00e7\u00e3o (se rejeitado)"
+    },
+    "dataAprovacao": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data de aprova\u00e7\u00e3o/rejei\u00e7\u00e3o"
+    }
+  },
+  "required": [
+    "userId",
+    "perfilId",
+    "tipoAtual",
+    "tipoDesejado",
+    "motivo",
+    "documentoNovo"
+  ]
+}

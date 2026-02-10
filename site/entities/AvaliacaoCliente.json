@@ -1,0 +1,39 @@
+{
+  "name": "AvaliacaoCliente",
+  "type": "object",
+  "properties": {
+    "cotacaoId": {
+      "type": "string",
+      "description": "ID da cota\u00e7\u00e3o avaliada"
+    },
+    "transportadoraId": {
+      "type": "string",
+      "description": "ID da transportadora que avalia"
+    },
+    "clienteId": {
+      "type": "string",
+      "description": "ID do cliente avaliado"
+    },
+    "nota": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "Nota de 0 a 5 estrelas"
+    },
+    "comentario": {
+      "type": "string",
+      "description": "Coment\u00e1rio sobre o cliente"
+    },
+    "dataAvaliacao": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora da avalia\u00e7\u00e3o"
+    }
+  },
+  "required": [
+    "cotacaoId",
+    "transportadoraId",
+    "clienteId",
+    "nota"
+  ]
+}

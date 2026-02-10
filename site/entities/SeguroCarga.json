@@ -1,0 +1,54 @@
+{
+  "name": "SeguroCarga",
+  "type": "object",
+  "properties": {
+    "seguradora": {
+      "type": "string",
+      "description": "Nome da seguradora"
+    },
+    "tipoCobertura": {
+      "type": "string",
+      "enum": [
+        "basica",
+        "intermediaria",
+        "completa",
+        "premium"
+      ],
+      "description": "Tipo de cobertura oferecida"
+    },
+    "valorCobertura": {
+      "type": "number",
+      "description": "Valor m\u00e1ximo de cobertura em R$"
+    },
+    "valorSeguro": {
+      "type": "number",
+      "description": "Valor do seguro a ser pago"
+    },
+    "percentualNCM": {
+      "type": "number",
+      "description": "Percentual aplicado com base no NCM"
+    },
+    "ncmsAplicaveis": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Lista de NCMs onde este seguro se aplica"
+    },
+    "descricao": {
+      "type": "string",
+      "description": "Descri\u00e7\u00e3o das coberturas inclu\u00eddas"
+    },
+    "ativo": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "seguradora",
+    "tipoCobertura",
+    "valorCobertura",
+    "valorSeguro"
+  ]
+}
